@@ -8,4 +8,11 @@ button.addEventListener('click', function() {
             body.classList.remove('darkmode');
             body.classList.add('lightmode');
         }
-    });
+    }
+);
+
+const button2 = document.getElementById('borderToggle');
+button2.addEventListener('click', function() {
+    body.classList.toggle('hide-borders');
+    button2.remove();
+});

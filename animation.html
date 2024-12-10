@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Word Reveal Animation</title>
+    <style>
+        button{
+            float: right;
+        }
+        .container {
+            border-color: black;
+            position: relative;
+            height: 300px;
+            width: 300px;
+            overflow: hidden;
+            text-align: center;
+            margin: 0 auto;
+        }
+
+        .word {
+            position: relative;
+            left: 50%;
+            transform: translateX(-50%);
+            transition: all 0.5s ease;
+            opacity: 1;
+            font-size: 24px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="wordContainer"></div>
+    <button id="revealBtn">Reveal Next Word</button>
+
+    <script>
+        class WordReveal {
+            constructor(words) {
+                this.words = words;
+                this.currentIndex = 0;
+                this.container = document.getElementById('wordContainer');
+                this.revealBtn = document.getElementById('revealBtn');
+                this.revealBtn.addEventListener('click', () => this.revealNextWord());
+            }
+
+            revealNextWord() {
+                // If all words have been shown, reset
+                if (this.currentIndex >= this.words.length) {
+                    this.reset();
+                    return;
+                }
+
+                // Create new word element
+                const wordElement = document.createElement('div');
+                wordElement.classList.add('word');
+                wordElement.textContent = this.words[this.currentIndex];
+
+                // Adjust existing words
+                const existingWords = this.container.querySelectorAll('.word');
+                existingWords.forEach((word, index) => {
+                    word.style.opacity = 1 - ((index + 1) * 0.2);
+                    word.style.transform = `translateX(-50%) translateY(${(index + 1) * 50}px) scale(${1 - ((index + 1) * 0.1)})`;
+                });
+
+                // Add new word
+                this.container.appendChild(wordElement);
+                this.currentIndex++;
+
+                // Update button text
+                if (this.currentIndex >= this.words.length) {
+                    this.revealBtn.textContent = 'Reset';
+                }
+            }
+
+            reset() {
+                this.container.innerHTML = '';
+                this.currentIndex = 0;
+                this.revealBtn.textContent = 'Reveal Next Word';
+            }
+        }
+
+        // Initialize with word list
+        const wordReveal = new WordReveal([
+            "Hello", 
+            "Welcome", 
+            "To", 
+            "An", 
+            "Animated", 
+            "Word", 
+            "Reveal", 
+            "Experience"
+        ]);
+    </script>
+</body>
+</html>

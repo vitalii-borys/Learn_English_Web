@@ -1,13 +1,68 @@
 body {
     height: 100vh;
+    display: grid;
+    grid-template-columns: 8vh auto;
+    margin: 0%;
 }
-h1 {
+.hide-borders * {
+    border: none !important;
+}
+.gridelement {
+    display: grid;
     text-align: center;
-    font-size: 5vh;
+    grid-template-columns: auto 11vh;
+    border: 2px solid green;
+    margin: 4px;
 }
-button {
-    font-size: 5vh;
+.innergridelement {
+    display: grid;
+    grid-template-rows: 22vh 22vh auto auto auto auto auto;
+    font-size: 4vh;
+    border: 2px solid purple;
+    margin: 4px;
+}
+.fortextua {
+    display: grid;
+    place-items: center;
+    border: 2px solid rgb(0, 92, 128);
+    margin: 4px;
+}
+.fortext {
+    display: flex;
+    justify-content: center;
+    place-items: center;
+    border: 2px solid rgb(0, 92, 128);
+    margin: 4px;
+}
+.inputchar {
+    height: 4vh;
+}
+.changecolorbutton {
+    border-radius: 1vh;
+    position: absolute;
+    top: 6vh;
+    height: 6vh;
+    width: 6vh;
+    border: 2px solid red;
+    font-size: 3vh;
     background-color: rgb(128, 128, 128);
+}
+.debugbutton {
+    border-radius: 1vh;
+    position: absolute;
+    top: 16vh;
+    height: 6vh;
+    width: 6vh;
+    border: 2px solid red;
+    font-size: 4vh;
+    background-color: rgb(128, 128, 128);
+}
+.enterbutton {
+    border-radius: 1vh;
+    height: 8vh;
+    width: 8vh;
+    border: 2px solid blue;
+    font-size: 2vh;
 }
 .darkmode {
     background-color: rgb(80, 80, 80);
@@ -18,4 +73,45 @@ button {
     background-color: rgb(200, 200, 200);
     color: black;
     background-image: radial-gradient(circle at 50% 30%, white, rgb(77, 77, 77));
+}
+/* body.darkmode input {
+    background-image: radial-gradient(ellipse at center, white,rgb(196, 196, 196));
+}
+body.lightmode input {
+    background-image: radial-gradient(ellipse at center, white, rgb(209, 209, 209));
+} */
+.first {
+    font-size: 4vh;
+    border: 2px solid rgb(0, 92, 128);
+    display: grid;
+    place-items: center;
+    margin: 4px;
+}
+.second {
+    font-size: 3.5vh;
+    border: 2px solid rgb(0, 92, 128);
+    display: grid;
+    place-items: center;
+    margin: 4px;
+}
+.third {
+    font-size: 3vh;
+    border: 2px solid rgb(0, 92, 128);
+    display: grid;
+    place-items: center;
+    margin: 4px;
+}
+.fourth {
+    font-size: 2.5vh;
+    border: 2px solid rgb(0, 92, 128);
+    display: grid;
+    place-items: center;
+    margin: 4px;
+}
+.fifth {
+    font-size: 2vh;
+    border: 2px solid rgb(0, 92, 128);
+    display: grid;
+    place-items: center;
+    margin: 4px;
 }
