@@ -1,13 +1,97 @@
 body {
     height: 100vh;
+    display: grid;
+    grid-template-columns: 8vh auto 11vh;
+    margin: 0%;
 }
-h1 {
+.innergridelement {
+    display: flex;
+    justify-content: center;
+    font-size: 4vh;
+    border: 2px solid purple;
+    margin: 4px;
+}
+#connectedinput {
+    color: black;
+    font-size: 5vh;
+    position: absolute;
+    top: 15vh;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    border: 2px solid rgb(0, 92, 128);
+    margin: 4px;
+    font-family: "Times New Roman", Times, serif;
+}
+#movingtext {
+    color: black;
+    position: absolute;
+    font-size: 5vh;
+    top: 15vh;
+    z-index: 1;
+    opacity: 0%;
+    transition: transform 1s ease-in-out, opacity 1s ease-in-out, font-size 1s ease-in-out;
+    font-family: "Times New Roman", Times, serif;
+    border: 2px solid rgb(0, 92, 128);
+    margin: 4px;
+}
+#fortextua {
+    position: absolute;
+    top: 6vh;
+    font-family: "Times New Roman", Times, serif;
+    border: 2px solid yellow;
+    margin: 4px;
+}
+#inputchar {
+    font-family: "Times New Roman", Times, serif;
     text-align: center;
-    font-size: 5vh;
+    height: 4vh;
+    width: 4vh;
+    font-size: 4vh;
 }
-button {
-    font-size: 5vh;
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-10px); }
+    20%, 40%, 60%, 80% { transform: translateX(10px); }
+}
+.shake {
+    animation: shake 0.5s;
+}
+button:hover {
+    background-color: #0056b3;
+}
+.changecolorbutton {
+    border-radius: 1vh;
+    position: absolute;
+    top: 6vh;
+    height: 6vh;
+    width: 6vh;
+    border: 2px solid red;
+    font-size: 3vh;
     background-color: rgb(128, 128, 128);
+}
+.debugbutton {
+    border-radius: 1vh;
+    position: absolute;
+    top: 16vh;
+    height: 6vh;
+    width: 6vh;
+    border: 2px solid red;
+    font-size: 4vh;
+    background-color: rgb(128, 128, 128);
+}
+.enterbutton {
+    position: relative;
+    top: 12vh;
+    left: -1vh;
+    border-radius: 1vh;
+    height: 8vh;
+    width: 8vh;
+    border: 2px solid blue;
+    font-size: 2vh;
+}
+.hide-borders * {
+    border: none !important;
 }
 .darkmode {
     background-color: rgb(80, 80, 80);
