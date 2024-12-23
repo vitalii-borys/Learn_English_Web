@@ -1,0 +1,74 @@
+body {
+    margin: 0px;
+    justify-items: center;
+    height: 100vh;
+    font-size: 7vh;
+    /* background-color: rgb(41, 43, 38); */
+    /* color: white; */
+    position: relative;
+}
+div {
+    margin: 0px;
+    display: flex;
+    justify-items: center;
+    top: 7vh;
+    white-space: nowrap;
+    /* overflow: hidden; */
+}
+input {
+    font-size: 7vh;
+    width: 7vh;
+    justify-items: center;
+}
+button {
+    font-size: 4vh;
+    justify-items: center;
+}
+button:hover {
+    background-color: rgb(41, 43, 38);
+    color: white;
+}
+span {
+    font-size: 7vh;
+    justify-items: center;
+}
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+  
+.shake {
+    animation: shake 0.5s;
+}
+#enterButton {
+    position: absolute;
+    right: 0vh;
+    top: 7vh;
+}
+#createButton {
+    height: 7vh;
+    width: 7vh;
+    position: absolute;
+    left: 0vh;
+    top: 7vh;
+}
+#connectedText {
+    position: absolute;
+    top: 20vh;
+    left: 50%;
+    transform: translate(-50%, 0%);
+    border: 1px solid white;
+}
+.darkmode {
+    background-color: rgb(80, 80, 80);
+    color: white;
+    background-image: radial-gradient(circle at 50% 30%,rgb(139, 139, 139), rgb(36, 36, 36));
+}
+.lightmode {
+    background-color: rgb(200, 200, 200);
+    color: black;
+    background-image: radial-gradient(circle at 50% 30%, white, rgb(77, 77, 77));
+}
