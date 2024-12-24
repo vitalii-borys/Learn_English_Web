@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Movable Div</title>
+</head>
+<body>
+<script>
+class DivManager {
+    constructor() {
+        this.divCount = 0; // To assign unique IDs
+    }
+
+    createDivWithButtons(content) {
+        const container = document.createElement("div");
+        container.style.position = "absolute";
+        container.style.display = "inline-block"; // Ensure it wraps the div and buttons
+        container.style.border = "1px solid black";
+        container.style.padding = "10px";
+
+        // Create the main div
+        const div = document.createElement("div");
+        div.textContent = content;
+        div.style.width = "100px";
+        div.style.height = "50px";
+        div.style.backgroundColor = "lightblue";
+        div.style.display = "flex";
+        div.style.alignItems = "center";
+        div.style.justifyContent = "center";
+        div.style.marginBottom = "10px";
+
+        // Create buttons
+        const leftButton = document.createElement("button");
+        leftButton.textContent = "←";
+        const rightButton = document.createElement("button");
+        rightButton.textContent = "→";
+        const upButton = document.createElement("button");
+        upButton.textContent = "↑";
+        const downButton = document.createElement("button");
+        downButton.textContent = "↓";
+
+        // Add event listeners to move the container
+        leftButton.addEventListener("click", () => {
+            const left = parseInt(container.style.left || "0");
+            container.style.left = `${left - 10}px`;
+        });
+        rightButton.addEventListener("click", () => {
+            const left = parseInt(container.style.left || "0");
+            container.style.left = `${left + 10}px`;
+        });
+        upButton.addEventListener("click", () => {
+            const top = parseInt(container.style.top || "0");
+            container.style.top = `${top - 10}px`;
+        });
+        downButton.addEventListener("click", () => {
+            const top = parseInt(container.style.top || "0");
+            container.style.top = `${top + 10}px`;
+        });
+
+        // Append buttons and div to the container
+        container.appendChild(upButton);
+        container.appendChild(document.createElement("br")); // Break to position below
+        container.appendChild(leftButton);
+        container.appendChild(div);
+        container.appendChild(rightButton);
+        container.appendChild(document.createElement("br"));
+        container.appendChild(downButton);
+
+        // Position the container
+        container.style.top = "50px";
+        container.style.left = "50px";
+        container.style.position = "absolute";
+        container.style = connectedinput;
+
+        // Append the container to the body
+        document.body.appendChild(container);
+
+        // Remove the container after 2 seconds
+        setTimeout(() => {
+            document.body.removeChild(container);
+            console.log(`Removed div and its buttons: ${content}`);
+        }, 2000);
+    }
+}
+
+// Instantiate the manager
+const manager = new DivManager();
+
+// Button to create new divs
+const createButton = document.createElement("button");
+createButton.textContent = "Create Div with Buttons";
+createButton.addEventListener("click", () => manager.createDivWithButtons("Move Me!"));
+document.body.appendChild(createButton);
+    </script>
+</body>
+</html>

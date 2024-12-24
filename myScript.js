@@ -1,15 +1,14 @@
 const body = document.body;
-const button = document.getElementById('toggleColorMode');
-button.addEventListener('click', function() {
+const mybutton = document.getElementById('toggleColorMode');
+mybutton.addEventListener('click', function() {
     if (body.classList.contains('lightmode')) {
         body.classList.remove('lightmode');
         body.classList.add('darkmode');
     } else {
-            body.classList.remove('darkmode');
-            body.classList.add('lightmode');
-        }
+        body.classList.remove('darkmode');
+        body.classList.add('lightmode');
     }
-);
+});
 
 const button2 = document.getElementById('borderToggle');
 button2.addEventListener('click', function() {
@@ -49,3 +48,63 @@ enterButton.addEventListener('click', function fade() {
         }, 500);
     }
 });
+
+class DivManager {
+    constructor() {
+        this.divCount = 0;
+    }
+
+    createDivWithButtons(content) {
+        const container = document.createElement("div");
+        container.classList.add("custom-container"); // Add class for style inheritance
+        container.style.padding = "10px";
+        
+        const div = document.createElement("div");
+        div.textContent = content;
+        div.classList.add("custom-div"); // Add class for style inheritance
+        
+        const leftButton = document.createElement("button");
+        leftButton.textContent = "←";
+        const rightButton = document.createElement("button");
+        rightButton.textContent = "→";
+        const upButton = document.createElement("button");
+        upButton.textContent = "↑";
+        const downButton = document.createElement("button");
+        downButton.textContent = "↓";
+
+        leftButton.addEventListener("click", () => {
+            const left = parseInt(container.style.left || "0");
+            container.style.left = `${left - 10}px`;
+        });
+        rightButton.addEventListener("click", () => {
+            const left = parseInt(container.style.left || "0");
+            container.style.left = `${left + 10}px`;
+        });
+        upButton.addEventListener("click", () => {
+            const top = parseInt(container.style.top || "0");
+            container.style.top = `${top - 10}px`;
+        });
+        downButton.addEventListener("click", () => {
+            const top = parseInt(container.style.top || "0");
+            container.style.top = `${top + 10}px`;
+        });
+        
+        container.appendChild(div);
+        container.appendChild(upButton);
+        container.appendChild(leftButton);
+        container.appendChild(rightButton);
+        container.appendChild(downButton);
+        document.body.appendChild(container);
+
+        setTimeout(() => {
+            document.body.removeChild(container);
+            console.log(`Removed div and its buttons: ${content}`);
+        }, 4000);
+    }
+}
+
+const manager = new DivManager();
+const createButton = document.createElement("button");
+createButton.textContent = "Create Div with Buttons";
+createButton.addEventListener("click", () => manager.createDivWithButtons("self-indulgence"));
+document.body.appendChild(createButton);

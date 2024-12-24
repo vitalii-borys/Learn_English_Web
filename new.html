@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello Fade Effect</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+
+        #helloID {
+            font-size: 2rem;
+            color: #333;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out, transform 0.2s ease-in-out;
+            position: absolute;
+            top: 100px;
+            border: 2px solid green;
+            background-color: red;
+        }
+
+        button {
+            position: absolute;
+            top: 0px;
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+            border: none;
+            background-color: #007BFF;
+            color: white;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <button onclick="fadeHello(), addWord()">Press here</button>
+    <div id="helloID"></div>
+
+    <script>
+        const words = ["Apple", "Banana", "Cherry", "Date", "Elderberry", "Fig", "Grape"];
+        let index = 0;
+        let offset = 0;
+        
+        /* // Create a button to trigger div creation
+        const createButton = document.createElement('button');
+        createButton.textContent = 'Button';
+        createButton.onclick = createTemporaryDivs;
+        createButton2.style.top = '500px';
+        document.body.appendChild(createButton);
+         */
+        function addWord() {
+            let hasFaded = false;
+            const newDiv = document.createElement('div');
+            newDiv.textContent = words[index];
+            index = index + 1;
+            document.body.append(newDiv);
+            offset += 50;
+            const uniqueId = 'Div' + Date.now();
+            newDiv.setAttribute('data-dynamic-div', uniqueId);
+            newDiv.style.position = 'absolute';
+            newDiv.style.top = 0 + 'px';
+            newDiv.style.fontSize = 5 + 'vh';
+            newDiv.style.backgroundColor = 'red';
+            newDiv.style.transform = `translateY(${offset}px)`;
+            if (!hasFaded) {
+                newDiv.style.opacity = '1';
+                setTimeout(() => {
+                    newDiv.style.transition = 'opacity 5s ease-in-out, transform 0.2s ease-in-out';
+                    newDiv.style.opacity = '0';
+                    hasFaded = true;remove(newDiv);
+                }, 500); // 0.5s fade-in
+            }
+        }
+
+        function fadeHello() {
+            let hasFaded = false;
+            offset += 50;
+            const helloElement = document.getElementById('helloID');
+            document.getElementById('helloID').textContent = words[index];
+            helloElement.style.transform = `translateY(${offset}px)`;
+            if (!hasFaded) {
+                helloElement.style.opacity = '1';
+                setTimeout(() => {
+                    helloElement.style.transition = 'opacity 5s ease-in-out, transform 0.2s ease-in-out';
+                    helloElement.style.opacity = '0';
+                    hasFaded = true;
+                }, 500); // 0.5s fade-in
+            }
+        }
+
+        class DivManager {
+            constructor() {
+                this.divIds = [];
+            }
+
+            createDiv() {
+                const newDiv = document.createElement('div');
+                const uniqueId = 'div-' + Date.now();
+                newDiv.setAttribute('data-dynamic-div', uniqueId);
+                newDiv.classList.add('myStyle');
+                newDiv.textContent = 'Temporary Div';
+                document.body.appendChild(newDiv);
+                    setTimeout(() => {
+                        newDiv.remove();
+                    }, 5000);
+                return uniqueId; // Return the unique identifier
+            }
+        
+            removeDiv(uniqueId) {
+                // Find the div using the unique identifier
+                const targetDiv = document.querySelector(`[data-dynamic-div="${uniqueId}"]`);
+                if (targetDiv) {
+                    setTimeout(() => {
+                        targetDiv.remove();
+                    }, 500);
+                }
+            }
+
+            removeAllDivs() {
+                // Create a copy of the array to avoid mutation during iteration
+                [...this.divIds].forEach(id => this.removeDiv(id));
+            }
+
+            moveAllDivs() {
+                // Create a copy of the array to avoid mutation during iteration
+                var divIdsCopy = Array.from(this.divIds);
+                    for (var i = 0; i < divIdsCopy.length; i++) {
+                        const helloElement = divIdsCopy[i];
+                        this.removeDiv(helloElement);
+                        let hasFaded = false;
+                        helloElement.textContent = words[index];
+                offset += 50;
+                helloElement.style.transform = `translateY(${offset}px)`;
+                if (!hasFaded) {
+                    helloElement.style.opacity = '1';
+                    setTimeout(() => {
+                        helloElement.style.transition = 'opacity 5s ease-in-out, transform 0.2s ease-in-out';
+                        helloElement.style.opacity = '0';
+                        hasFaded = true;
+                    }, 500); // 0.5s fade-in
+                }
+                    }
+            }
+
+            getDivCount() {
+                return this.divIds.length;
+            }
+
+            createTemporaryDivs() {
+                const div1Id = createDiv();
+                //const div2Id = createDiv();    
+                console.log('Created divs with IDs:', div1Id, div2Id);
+            };
+        }
+        const myDivManager = new DivManager();
+
+    </script>
+</body>
+</html>

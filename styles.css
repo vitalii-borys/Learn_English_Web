@@ -1,16 +1,11 @@
 body {
     height: 100vh;
-    display: grid;
-    grid-template-columns: 8vh auto 11vh;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
     margin: 0%;
 }
-.innergridelement {
-    display: flex;
-    justify-content: center;
-    font-size: 4vh;
-    border: 2px solid purple;
-    margin: 4px;
-}
+
 #connectedinput {
     color: black;
     font-size: 5vh;
@@ -19,6 +14,7 @@ body {
     z-index: 2;
     display: flex;
     align-items: center;
+    justify-self: center;
     border: 2px solid rgb(0, 92, 128);
     margin: 4px;
     font-family: "Times New Roman", Times, serif;
@@ -36,8 +32,8 @@ body {
     margin: 4px;
 }
 #fortextua {
-    position: absolute;
-    top: 6vh;
+    font-size: 5vh;
+    justify-self: center;
     font-family: "Times New Roman", Times, serif;
     border: 2px solid yellow;
     margin: 4px;
@@ -64,6 +60,7 @@ button:hover {
     border-radius: 1vh;
     position: absolute;
     top: 6vh;
+    left: 10vw;
     height: 6vh;
     width: 6vh;
     border: 2px solid red;
@@ -102,4 +99,26 @@ button:hover {
     background-color: rgb(200, 200, 200);
     color: black;
     background-image: radial-gradient(circle at 50% 30%, white, rgb(77, 77, 77));
+}
+
+.custom-div {
+    color: black;
+    font-size: 5vh;
+    position: relative;
+    top: 0vh;
+    display: flex;
+    align-items: center;
+    border: 2px solid red;
+    font-family: "Times New Roman", Times, serif;
+    /* Add styles that should be inherited by the div */
+}
+
+.center-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* Add styles that should be inherited by the div */
+    position: absolute;
+    width: 100%;
+    top: 6vh;
 }
