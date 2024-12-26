@@ -54,7 +54,7 @@ class DivManager {
         }, 100);
 
         setTimeout(() => {
-            div.style.transition = 'opacity 5s linear, top 5s linear, font-size 5s linear';
+            div.style.transition = 'opacity 5s cubic-bezier(0,.82,.43,.92), top 5s linear, font-size 5s linear';
             div.style.opacity = '0';
         }, 5100);
 
@@ -78,6 +78,17 @@ class DivManager {
             });
         }, 150);
     }
+
+    showConstructor(moment) {
+        console.log(this.divID + ' is divID');
+        console.log(this.divs.length + ' is divs length');
+        console.log(this.ENwords);
+        console.log(this.UAwords);
+        console.log(this.currentWordIndex + ' is curWorInd');
+        console.log(this.charToGuess + ' is chartog');
+        console.log('When? ' + moment);
+    }
+
 }
 
 function lightDarkMode(){
@@ -90,20 +101,32 @@ function lightDarkMode(){
     }
 }
 
+const myEvent = new KeyboardEvent('keydown', {
+    key: 'Enter',
+    code: 'Enter',
+    which: 13,
+    keyCode: 13,
+});
+
+document.addEventListener('keydown', (myEvent) => {
+    if (myEvent.key === 'Enter') {
+        myEnterButton.click();
+    }
+});
+
 const divManager = new DivManager();
-const myInput = document.getElementById('myInput');
 const toggleButton = document.getElementById('toggleButton');
 const myEnterButton = document.getElementById('enterButton');
+const myInput = document.getElementById('myInput');
 
-let content = divManager.ENwords[divManager.currentWordIndex];
 divManager.splitWordDiv(divManager.ENwords[divManager.currentWordIndex]);
 toggleButton.addEventListener('click', () => {lightDarkMode();});
 
-myEnterButton.addEventListener('click', () => {    
+myEnterButton.addEventListener('click', () => {
     if (myInput.value == divManager.charToGuess) {
         console.log(myInput.value + ' & ' + divManager.charToGuess + ' are equal chars to guess');
         divManager.splitWordDiv(divManager.ENwords[divManager.currentWordIndex]);
-        divManager.currentWordIndex++;
+        divManager.currentWordIndex = divManager.currentWordIndex + 1;
         divManager.createDiv();
         divManager.moveAllDivsDown();
     } else {
@@ -114,4 +137,7 @@ myEnterButton.addEventListener('click', () => {
             connectedText.classList.remove('shake');
         }, 500);
     }
+    divManager.showConstructor('After enter clicked');
+    myInput.value = '';
+    myInput.focus();
 });
