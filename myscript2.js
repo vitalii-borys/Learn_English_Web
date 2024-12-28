@@ -4,21 +4,17 @@ class DivManager {
         this.divs = [];
         this.ENwords = ["example", "words", "here"];
         this.UAwords = ["приклад", "слова", "тут"];
-        this.currentWordIndex = 0;
+        this.currentWordIndex = this.ENwords.length - 1;
         this.charToGuess = '';
     }
 
-    splitWordDiv(contentToSplit) {
-        
+    splitWordDiv(contentToSplit) {        
         let leftPart = document.getElementById('leftText');
         let rightPart = document.getElementById('rightText');
-        let myUAContent = this.UAwords[this.currentWordIndex];
-        //let divEN = document.getElementById('connectedText');
-        let divUA = document.getElementById('UAtext');
-        //divEN.textContent = content;
-        divUA.textContent = myUAContent;
-        
         const myRandomCharIndex = (Math.floor(Math.random() * (contentToSplit.length - 1)) + 1);
+        let divUA = document.getElementById('UAtext');
+        let myUAContent = this.UAwords[this.currentWordIndex];
+        divUA.textContent = myUAContent;
         this.charToGuess = contentToSplit.charAt(myRandomCharIndex);
         console.log(this.charToGuess + ' is assigned char to guess');
         let leftContent = contentToSplit.slice(0, myRandomCharIndex);
@@ -28,7 +24,6 @@ class DivManager {
         } else {
             rightContent = contentToSplit.slice(myRandomCharIndex + 1, contentToSplit.length);
         }
-
         leftPart.textContent = leftContent;
         rightPart.textContent = rightContent;
         console.log(leftPart.textContent + ' & ' + rightPart.textContent + ' are assigned sides');
@@ -37,7 +32,8 @@ class DivManager {
     createDiv() {
         const myContent = `${this.ENwords[this.currentWordIndex]}`;
         const div = document.createElement('div');
-        div.id = this.divID++;
+        div.id = this.divID;
+        this.divID = this.divID + 1;
         div.textContent = `${myContent + `${div.id}`}`;
         div.style.position = 'absolute';
         div.style.left = '50%';
@@ -63,7 +59,7 @@ class DivManager {
             this.divs = this.divs.filter((d) => d !== div);
         }, 10100);
 
-        this.currentWordIndex = (this.currentWordIndex + 1) % this.ENwords.length;
+        //this.currentWordIndex = (this.currentWordIndex + 1) % this.ENwords.length;
 
         return div;
     }
@@ -82,8 +78,8 @@ class DivManager {
     showConstructor(moment) {
         console.log(this.divID + ' is divID');
         console.log(this.divs.length + ' is divs length');
-        console.log(this.ENwords);
-        console.log(this.UAwords);
+        //console.log(this.ENwords);
+        //console.log(this.UAwords);
         console.log(this.currentWordIndex + ' is curWorInd');
         console.log(this.charToGuess + ' is chartog');
         console.log('When? ' + moment);
@@ -115,19 +111,39 @@ document.addEventListener('keydown', (myEvent) => {
 });
 
 const divManager = new DivManager();
-const toggleButton = document.getElementById('toggleButton');
-const myEnterButton = document.getElementById('enterButton');
-const myInput = document.getElementById('myInput');
+const toggleButton = document.createElement('button');
+const myEnterButton = document.createElement('button');
+const uaDiv = document.createElement('div');
+const connectedDiv = document.createElement('div');
+const leftDiv = document.createElement('div');
+const myInput = document.createElement('input');
+const rightDiv = document.createElement('div');
+connectedDiv.id = 'connectedText';
+leftDiv.id = 'leftText';
+rightDiv.id = 'rightText';
+myInput.id = 'myInput';
+myInput.type = 'text';
+myInput.maxLength = '1';
+myInput.value = '';
+myEnterButton.id = 'enterButton';
+myEnterButton.textContent = 'Enter'
+toggleButton.id = 'toggleButton';
+uaDiv.id = 'UAtext';
+document.body.appendChild(uaDiv);
+document.body.appendChild(toggleButton);
+document.body.appendChild(myEnterButton);
+document.body.appendChild(connectedDiv);
+connectedDiv.appendChild(leftDiv);
+connectedDiv.appendChild(myInput);
+connectedDiv.appendChild(rightDiv);
 
-divManager.splitWordDiv(divManager.ENwords[divManager.currentWordIndex]);
 toggleButton.addEventListener('click', () => {lightDarkMode();});
-
 myEnterButton.addEventListener('click', () => {
     if (myInput.value == divManager.charToGuess) {
         console.log(myInput.value + ' & ' + divManager.charToGuess + ' are equal chars to guess');
         divManager.splitWordDiv(divManager.ENwords[divManager.currentWordIndex]);
-        divManager.currentWordIndex = divManager.currentWordIndex + 1;
         divManager.createDiv();
+        divManager.currentWordIndex = (divManager.currentWordIndex + 1) % divManager.ENwords.length;
         divManager.moveAllDivsDown();
     } else {
         console.log(myInput.value + ' & ' + divManager.charToGuess + ' are not equal chars to guess');
@@ -141,3 +157,8 @@ myEnterButton.addEventListener('click', () => {
     myInput.value = '';
     myInput.focus();
 });
+
+divManager.showConstructor('On start');
+divManager.splitWordDiv('lean');
+uaDiv.textContent = 'нахилитися';
+divManager.showConstructor('after splitting')

@@ -13,11 +13,6 @@ div {
     justify-items: center;
 }
 
-.text {
-    font-size: 3rem;
-    text-align: center;
-}
-
 #UAtext {
     position: relative;
     top: 2rem;
@@ -29,12 +24,11 @@ div {
     text-align: center;
     display: -webkit-box;
     -webkit-box-orient: vertical;
-    /* border: 1px solid black; */
 }
 
 @media screen and (max-width: 768px) {
     #UAtext {
-      font-size: clamp(2rem, 5vw, 3rem);
+      font-size: clamp(2rem, 3rem);
     }
   }
 
