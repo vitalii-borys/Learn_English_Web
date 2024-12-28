@@ -4,11 +4,14 @@ class DivManager {
         this.divs = [];
         this.ENwords = ["example", "words", "here"];
         this.UAwords = ["приклад", "слова", "тут"];
-        this.currentWordIndex = this.ENwords.length - 1;
+        this.currentWordIndex = 0;
         this.charToGuess = '';
+        this.wordtoguess = 'lean';
+        this.topUacontent = 'нахилитися';
     }
 
     splitWordDiv(contentToSplit) {        
+        console.log(contentToSplit + ' is content to split')
         let leftPart = document.getElementById('leftText');
         let rightPart = document.getElementById('rightText');
         const myRandomCharIndex = (Math.floor(Math.random() * (contentToSplit.length - 1)) + 1);
@@ -30,11 +33,11 @@ class DivManager {
     }
 
     createDiv() {
-        const myContent = `${this.ENwords[this.currentWordIndex]}`;
+        const myContent = this.wordtoguess;/* `${this.ENwords[this.currentWordIndex - 1]}`; */
         const div = document.createElement('div');
         div.id = this.divID;
         this.divID = this.divID + 1;
-        div.textContent = `${myContent + `${div.id}`}`;
+        div.textContent = `${myContent/*  + `${div.id}` */}`;
         div.style.position = 'absolute';
         div.style.left = '50%';
         div.style.transform = 'translate(-50%, 0%)';
@@ -44,6 +47,8 @@ class DivManager {
         div.style.transition = 'opacity 0.2s, top 5s cubic-bezier(0,.82,.43,.92), font-size 5s cubic-bezier(0,.82,.43,.92)';
         document.body.appendChild(div);
         this.divs.push(div);
+
+        this.wordtoguess = this.ENwords[this.currentWordIndex];
 
         setTimeout(() => {
             div.style.opacity = '1';
@@ -159,6 +164,6 @@ myEnterButton.addEventListener('click', () => {
 });
 
 divManager.showConstructor('On start');
-divManager.splitWordDiv('lean');
-uaDiv.textContent = 'нахилитися';
+divManager.splitWordDiv(divManager.wordtoguess);
+uaDiv.textContent = divManager.topUacontent;
 divManager.showConstructor('after splitting')
