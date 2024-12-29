@@ -1,13 +1,19 @@
 class DivManager {
-    constructor() {
+    constructor(wordData) {
         this.divID = 0;
         this.divs = [];
-        this.ENwords = ["example", "words", "here"];
-        this.UAwords = ["приклад", "слова", "тут"];
+        this.ENwords = wordData.ENwords;
+        this.UAwords = wordData.UAwords;
         this.currentWordIndex = 0;
         this.charToGuess = '';
         this.wordtoguess = 'lean';
         this.topUacontent = 'нахилитися';
+    }
+
+    displayWords() {
+        console.log(this.ENwords.map(word => `${word}`).join(' ') +
+        this.UAwords.map(word => `${word}`).join(' '));
+        console.log("is output of DisplayWords")
     }
 
     splitWordDiv(contentToSplit) {        
@@ -114,8 +120,10 @@ document.addEventListener('keydown', (myEvent) => {
         myEnterButton.click();
     }
 });
-
-const divManager = new DivManager();
+import { wordData } from "./wordData.js";
+const divManager = new DivManager(wordData);
+window.divManager = divManager; // Make it globally available
+divManager.displayWords();
 const toggleButton = document.createElement('button');
 const myEnterButton = document.createElement('button');
 const uaDiv = document.createElement('div');
@@ -144,7 +152,7 @@ connectedDiv.appendChild(rightDiv);
 
 toggleButton.addEventListener('click', () => {lightDarkMode();});
 myEnterButton.addEventListener('click', () => {
-    if (myInput.value == divManager.charToGuess) {
+    if (myInput.value.toLowerCase() == divManager.charToGuess.toLowerCase()) {
         console.log(myInput.value + ' & ' + divManager.charToGuess + ' are equal chars to guess');
         divManager.splitWordDiv(divManager.ENwords[divManager.currentWordIndex]);
         divManager.createDiv();
@@ -167,3 +175,6 @@ divManager.showConstructor('On start');
 divManager.splitWordDiv(divManager.wordtoguess);
 uaDiv.textContent = divManager.topUacontent;
 divManager.showConstructor('after splitting')
+const jsonString = '{"height": 215, "age": 25, "isAngry": false}';
+const user = JSON.parse(jsonString);
+console.log(user.age + " hi, " + user.height);

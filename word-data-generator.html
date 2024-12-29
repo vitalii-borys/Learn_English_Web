@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Word Data Generator and Viewer</title>
+    <style>
+        .generator-tools {
+            margin: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Generator Interface -->
+    <div id="generatorTools" class="generator-tools">
+        <h3>Data Generator Tools:</h3>
+        <input type="file" id="enFile" accept=".txt"> English Words File<br><br>
+        <input type="file" id="uaFile" accept=".txt"> Ukrainian Words File<br><br>
+        <button onclick="handleFiles()">Process Files and Generate Data</button>
+        <button onclick="toggleGenerator()">Hide Generator</button>
+    </div>
+
+    <!-- Main Application Interface -->
+    <div id="output"></div>
+
+    <script>
+        // This will store our word data
+        let wordData = {
+            ENwords: [],
+            UAwords: []
+        };
+
+        // Function to generate JavaScript code
+        function generateJavaScriptCode(data) {
+            return `// wordData.js
+export const wordData = {
+    ENwords: ${JSON.stringify(data.ENwords, null, 4)},
+    UAwords: ${JSON.stringify(data.UAwords, null, 4)}
+};`;
+        }
+
+        // Function to handle file processing
+        async function handleFiles() {
+            const enFileInput = document.getElementById('enFile');
+            const uaFileInput = document.getElementById('uaFile');
+
+            try {
+                // Read English file
+                if (enFileInput.files.length > 0) {
+                    const enText = await enFileInput.files[0].text();
+                    wordData.ENwords = enText.split('\n')
+                        .map(line => line.trim())
+                        .filter(line => line.length > 0);
+                }
+
+                // Read Ukrainian file
+                if (uaFileInput.files.length > 0) {
+                    const uaText = await uaFileInput.files[0].text();
+                    wordData.UAwords = uaText.split('\n')
+                        .map(line => line.trim())
+                        .filter(line => line.length > 0);
+                }
+
+                // Generate JavaScript code
+                const jsCode = generateJavaScriptCode(wordData);
+
+                // Create download link for the generated file
+                const blob = new Blob([jsCode], { type: 'text/javascript' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'wordData.js';
+                a.click();
+                URL.revokeObjectURL(url);
+
+                // Update display
+                displayWords();
+                console.log('Data file generated and words loaded!');
+            } catch (error) {
+                console.error('Error processing files:', error);
+                document.getElementById('output').innerHTML = 'Error processing files: ' + error.message;
+            }
+        }
+
+        function toggleGenerator() {
+            const generatorTools = document.getElementById('generatorTools');
+            generatorTools.classList.toggle('hidden');
+        }
+
+        function displayWords() {
+            const output = document.getElementById('output');
+            let html = '<h3>English Words: ' + wordData.ENwords.length + ' words</h3>';
+            html += '<ul>' + wordData.ENwords.slice(0, 10).map(word => `<li>${word}</li>`).join('') + '</ul>';
+            if (wordData.ENwords.length > 10) html += '<p>... and more</p>';
+            
+            html += '<h3>Ukrainian Words: ' + wordData.UAwords.length + ' words</h3>';
+            html += '<ul>' + wordData.UAwords.slice(0, 10).map(word => `<li>${word}</li>`).join('') + '</ul>';
+            if (wordData.UAwords.length > 10) html += '<p>... and more</p>';
+            
+            output.innerHTML = html;
+        }
+
+        // Initialize display
+        displayWords();
+    </script>
+</body>
+</html>
