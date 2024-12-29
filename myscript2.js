@@ -1,29 +1,52 @@
+import { wordData } from "./wordData.js";
+
 class DivManager {
     constructor(wordData) {
         this.divID = 0;
         this.divs = [];
         this.ENwords = wordData.ENwords;
         this.UAwords = wordData.UAwords;
-        this.currentWordIndex = 0;
+        this.currentWordIndex = this.ENwords.length - 1;
         this.charToGuess = '';
-        this.wordtoguess = 'lean';
-        this.topUacontent = 'нахилитися';
+        this.shuffledData = this.shuffleArray(wordData);
+        this.wordtoguess = ''/* 'lean' */;
+        this.topUacontent = ''/* 'нахилитися' */;
     }
 
-    displayWords() {
-        console.log(this.ENwords.map(word => `${word}`).join(' ') +
-        this.UAwords.map(word => `${word}`).join(' '));
-        console.log("is output of DisplayWords")
+    shuffleArray(arrayOfColors) {
+        const { ENwords, UAwords } = arrayOfColors;
+        const indeces = Array.from({ length: ENwords.length }, (_, i) => i);
+        
+        for(let i = indeces.length - 1; i > 0 ; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [indeces[i], indeces[j]] = [indeces[j], indeces[i]];
+        }
+        return {
+            ENwords: indeces.map(i => ENwords[i]),
+            UAwords: indeces.map(i => UAwords[i]),
+        };
     }
 
-    splitWordDiv(contentToSplit) {        
-        console.log(contentToSplit + ' is content to split')
+    displayWords(timeHappened) {
+        console.log(this.ENwords.map(word => `${word}`).join(' ') + ' ' +
+        this.UAwords.map(word => `${word}`).join(' ') + " is output of DisplayWords " + timeHappened);
+    }
+
+    displayShuffledWords(timeHappened) {
+        console.log(this.shuffledData.ENwords.map(word => `${word}`).join(' ') + ' ' +
+        this.shuffledData.UAwords.map(word => `${word}`).join(' ') + " is output of DisplayShuffledWords " + timeHappened);
+    }
+
+    splitWordDiv() {
+        const contentToSplit = this.shuffledData.ENwords[this.currentWordIndex];        
+        console.log(contentToSplit + ' with index ' + this.currentWordIndex + ' is content to split')
         let leftPart = document.getElementById('leftText');
         let rightPart = document.getElementById('rightText');
         const myRandomCharIndex = (Math.floor(Math.random() * (contentToSplit.length - 1)) + 1);
         let divUA = document.getElementById('UAtext');
-        let myUAContent = this.UAwords[this.currentWordIndex];
+        let myUAContent = this.shuffledData.UAwords[this.currentWordIndex];
         divUA.textContent = myUAContent;
+        this.topUacontent = myUAContent;
         this.charToGuess = contentToSplit.charAt(myRandomCharIndex);
         console.log(this.charToGuess + ' is assigned char to guess');
         let leftContent = contentToSplit.slice(0, myRandomCharIndex);
@@ -33,6 +56,7 @@ class DivManager {
         } else {
             rightContent = contentToSplit.slice(myRandomCharIndex + 1, contentToSplit.length);
         }
+
         leftPart.textContent = leftContent;
         rightPart.textContent = rightContent;
         console.log(leftPart.textContent + ' & ' + rightPart.textContent + ' are assigned sides');
@@ -54,7 +78,7 @@ class DivManager {
         document.body.appendChild(div);
         this.divs.push(div);
 
-        this.wordtoguess = this.ENwords[this.currentWordIndex];
+        this.wordtoguess = this.shuffledData.ENwords[this.currentWordIndex];
 
         setTimeout(() => {
             div.style.opacity = '1';
@@ -69,8 +93,6 @@ class DivManager {
             document.body.removeChild(div);
             this.divs = this.divs.filter((d) => d !== div);
         }, 10100);
-
-        //this.currentWordIndex = (this.currentWordIndex + 1) % this.ENwords.length;
 
         return div;
     }
@@ -108,22 +130,13 @@ function lightDarkMode(){
     }
 }
 
-const myEvent = new KeyboardEvent('keydown', {
-    key: 'Enter',
-    code: 'Enter',
-    which: 13,
-    keyCode: 13,
-});
-
 document.addEventListener('keydown', (myEvent) => {
     if (myEvent.key === 'Enter') {
         myEnterButton.click();
     }
 });
-import { wordData } from "./wordData.js";
 const divManager = new DivManager(wordData);
 window.divManager = divManager; // Make it globally available
-divManager.displayWords();
 const toggleButton = document.createElement('button');
 const myEnterButton = document.createElement('button');
 const uaDiv = document.createElement('div');
@@ -172,9 +185,5 @@ myEnterButton.addEventListener('click', () => {
 });
 
 divManager.showConstructor('On start');
-divManager.splitWordDiv(divManager.wordtoguess);
-uaDiv.textContent = divManager.topUacontent;
-divManager.showConstructor('after splitting')
-const jsonString = '{"height": 215, "age": 25, "isAngry": false}';
-const user = JSON.parse(jsonString);
-console.log(user.age + " hi, " + user.height);
+myEnterButton.click();
+divManager.showConstructor('after initial splitting');
