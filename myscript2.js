@@ -57,6 +57,15 @@ class DivManager {
             rightContent = contentToSplit.slice(myRandomCharIndex + 1, contentToSplit.length);
         }
 
+    // Add &nbsp; to preserve whitespace
+    if (leftContent.endsWith(' ')) {
+        leftContent = leftContent.slice(0, -1) + '\u00A0';  // Replace space with &nbsp;
+    }
+    if (rightContent.startsWith(' ')) {
+        rightContent = '\u00A0' + rightContent.slice(1);  // Replace space with &nbsp;
+    }
+        
+
         leftPart.textContent = leftContent;
         rightPart.textContent = rightContent;
         console.log(leftPart.textContent + ' & ' + rightPart.textContent + ' are assigned sides');
