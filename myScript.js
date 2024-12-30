@@ -158,6 +158,7 @@ leftDiv.id = 'leftText';
 rightDiv.id = 'rightText';
 myInput.id = 'myInput';
 myInput.type = 'text';
+myInput.setAttribute('autocapitalize', 'none');
 myInput.maxLength = '1';
 myInput.value = '';
 myEnterButton.id = 'enterButton';
