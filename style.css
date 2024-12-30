@@ -79,7 +79,7 @@ span {
     width: 5rem;
     position: absolute;
     left: 0rem;
-    top: 50rem;
+    bottom: 5rem;
 }
 
 #connectedText {
