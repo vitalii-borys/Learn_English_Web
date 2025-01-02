@@ -18,9 +18,8 @@ div {
     justify-content: center;
     align-items: center;
     position: relative;
-    min-height: 7rem;
-    height: auto;
-    font-size: min(10vh, 10vw);
+    height: 7rem;
+    font-size: min(8vh, 8vw);
     word-wrap: break-word;
     top: 1rem;
     text-align: center;
