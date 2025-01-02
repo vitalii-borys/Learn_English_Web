@@ -19,7 +19,7 @@ div {
     align-items: center;
     position: relative;
     height: 7rem;
-    font-size: 5vh;
+    font-size: min(11vh, 11vw);
     word-wrap: break-word;
     top: 1rem;
     text-align: center;
