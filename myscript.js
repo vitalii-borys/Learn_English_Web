@@ -13,8 +13,9 @@ class DivManager {
         this.topUacontent = ''/* 'нахилитися' */;
     }
 
-    shuffleArray(arrayOfColors) {
-        const { ENwords, UAwords } = arrayOfColors;
+    shuffleArray(arrayOfWords) {
+        const { ENwords, UAwords } = arrayOfWords;
+        const preprocessedUAwords = UAwords.map(word => word.replace('\t', ' | '));
         const indeces = Array.from({ length: ENwords.length }, (_, i) => i);
         
         for(let i = indeces.length - 1; i > 0 ; i--) {
@@ -23,7 +24,7 @@ class DivManager {
         }
         return {
             ENwords: indeces.map(i => ENwords[i]),
-            UAwords: indeces.map(i => UAwords[i]),
+            UAwords: indeces.map(i => preprocessedUAwords[i]),
         };
     }
 
