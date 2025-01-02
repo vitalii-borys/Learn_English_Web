@@ -25,12 +25,6 @@ div {
     text-align: center;
 }
 
-@media screen and (max-width: 300px) {
-    #UAtext {
-        font-size: 2rem;
-    }
-}
-
 input {
     font-size: 3rem;
     width: 3rem;
