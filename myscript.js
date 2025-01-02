@@ -1,4 +1,4 @@
-import { wordData } from "./wordData.js";
+import { wordData } from "./wordData_test.js";
 
 class DivManager {
     constructor(wordData) {
