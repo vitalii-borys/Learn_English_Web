@@ -38,7 +38,7 @@ div {
     height: 7rem;
     font-size: min(5vh, 11vw);
     word-wrap: break-word;
-    top: 1rem;
+    top: -3rem;
     text-align: center;
 }
 
@@ -78,17 +78,18 @@ span {
     position: relative;
     border-radius: 7px;
     margin: 2rem;
-    border: 2px solid rgb(168, 177, 48);
+    border: 2px solid green;
+    top: -4rem;
 }
 
 #toggleButton {
     border-radius: 12px;
     border: none;
-    height: 2.5rem;
-    width: 2.5rem;
-    position: absolute;
-    left: 0rem;
-    bottom: 1rem;
+    height: 3rem;
+    width: 3rem;
+    position: relative;
+    left: -43%;
+    top: 77%;
 }
 
 #connectedText {
@@ -96,6 +97,7 @@ span {
     display: flex;
     justify-content: center;
     align-items: center;
+    top: -5rem;
 }
 
 .darkmode {

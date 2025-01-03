@@ -57,35 +57,33 @@ class DivManager {
         } else {
             rightContent = contentToSplit.slice(myRandomCharIndex + 1, contentToSplit.length);
         }
-
-    // Add &nbsp; to preserve whitespace
-    if (leftContent.endsWith(' ')) {
-        leftContent = leftContent.slice(0, -1) + '\u00A0';  // Replace space with &nbsp;
-    }
-    if (rightContent.startsWith(' ')) {
-        rightContent = '\u00A0' + rightContent.slice(1);  // Replace space with &nbsp;
-    }
-        
-
+        // Add &nbsp; to preserve whitespace
+        if (leftContent.endsWith(' ')) {
+            leftContent = leftContent.slice(0, -1) + '\u00A0';  // Replace space with &nbsp;
+        }
+        if (rightContent.startsWith(' ')) {
+            rightContent = '\u00A0' + rightContent.slice(1);  // Replace space with &nbsp;
+        }
         leftPart.textContent = leftContent;
         rightPart.textContent = rightContent;
         console.log(leftPart.textContent + ' & ' + rightPart.textContent + ' are assigned sides');
     }
 
     createDiv() {
-        const myContent = this.wordtoguess;/* `${this.ENwords[this.currentWordIndex - 1]}`; */
+        const aspectD = document.getElementById('aspect-container');
+        const myContent = this.wordtoguess;
         const div = document.createElement('div');
         div.id = this.divID;
         this.divID = this.divID + 1;
-        div.textContent = `${myContent/*  + `${div.id}` */}`;
+        div.textContent = `${myContent}`;
         div.style.position = 'absolute';
-        div.style.left = '50%';
-        div.style.transform = 'translate(-50%, 0%)';
-        div.style.top = '15rem';
+        /* div.style.left = '50%'; */
+        /* div.style.transform = 'translate(-50%, 0%)'; */
+        div.style.top = '50%';
         div.style.fontSize = '3rem';
         div.style.opacity = '0';
         div.style.transition = 'opacity 0.2s, top 5s cubic-bezier(0,.82,.43,.92), font-size 5s cubic-bezier(0,.82,.43,.92)';
-        document.body.appendChild(div);
+        aspectD.appendChild(div);
         this.divs.push(div);
 
         this.wordtoguess = this.shuffledData.ENwords[this.currentWordIndex];
@@ -100,7 +98,7 @@ class DivManager {
         }, 5100);
 
         setTimeout(() => {
-            document.body.removeChild(div);
+            aspectD.removeChild(div);
             this.divs = this.divs.filter((d) => d !== div);
         }, 10100);
 
@@ -113,7 +111,7 @@ class DivManager {
                 const currentFontSize = parseFloat(div.style.fontSize);
                 const currentTop = parseFloat(div.style.top);
                 div.style.fontSize = `${currentFontSize - 0.8}rem`;
-                div.style.top = `${currentTop + 5}rem`;
+                div.style.top = `${currentTop + 10}%`;
             });
         }, 150);
     }
@@ -168,7 +166,7 @@ myEnterButton.id = 'enterButton';
 myEnterButton.textContent = 'Enter'
 toggleButton.id = 'toggleButton';
 uaDiv.id = 'UAtext';
-document.body.appendChild(toggleButton);
+aspectDiv.appendChild(toggleButton);
 document.body.appendChild(aspectDiv);
 aspectDiv.appendChild(uaDiv);
 aspectDiv.appendChild(myEnterButton);
