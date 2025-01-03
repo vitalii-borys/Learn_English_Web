@@ -147,6 +147,7 @@ document.addEventListener('keydown', (myEvent) => {
 });
 const divManager = new DivManager(wordData);
 window.divManager = divManager; // Make it globally available
+const aspectDiv = document.createElement('div');
 const toggleButton = document.createElement('button');
 const myEnterButton = document.createElement('button');
 const uaDiv = document.createElement('div');
@@ -154,6 +155,7 @@ const connectedDiv = document.createElement('div');
 const leftDiv = document.createElement('div');
 const myInput = document.createElement('input');
 const rightDiv = document.createElement('div');
+aspectDiv.id = 'aspect-container';
 connectedDiv.id = 'connectedText';
 leftDiv.id = 'leftText';
 rightDiv.id = 'rightText';
@@ -166,10 +168,11 @@ myEnterButton.id = 'enterButton';
 myEnterButton.textContent = 'Enter'
 toggleButton.id = 'toggleButton';
 uaDiv.id = 'UAtext';
-document.body.appendChild(uaDiv);
 document.body.appendChild(toggleButton);
-document.body.appendChild(myEnterButton);
-document.body.appendChild(connectedDiv);
+document.body.appendChild(aspectDiv);
+aspectDiv.appendChild(uaDiv);
+aspectDiv.appendChild(myEnterButton);
+aspectDiv.appendChild(connectedDiv);
 connectedDiv.appendChild(leftDiv);
 connectedDiv.appendChild(myInput);
 connectedDiv.appendChild(rightDiv);
