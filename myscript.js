@@ -111,7 +111,7 @@ class DivManager {
                 const currentFontSize = parseFloat(div.style.fontSize);
                 const currentTop = parseFloat(div.style.top);
                 div.style.fontSize = `${currentFontSize - 0.8}rem`;
-                div.style.top = `${currentTop + 10}%`;
+                div.style.top = `${currentTop + 15}%`;
             });
         }, 150);
     }
