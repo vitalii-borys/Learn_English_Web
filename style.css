@@ -69,13 +69,13 @@ span {
 }
 
 #toggleButton {
-    border-radius: 8px;
+    border-radius: 12px;
     border: none;
-    height: 5rem;
-    width: 5rem;
+    height: 2.5rem;
+    width: 2.5rem;
     position: absolute;
     left: 0rem;
-    bottom: 5rem;
+    bottom: 1rem;
 }
 
 #connectedText {
