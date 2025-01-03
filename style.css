@@ -35,6 +35,7 @@ input {
 button {
     font-size: 3rem;
     justify-items: center;
+    background-color: gray;
 }
 
 span {
@@ -55,9 +56,8 @@ span {
 #enterButton {
     position: relative;
     border-radius: 7px;
-    border: none;
     margin: 2rem;
-    /* border: 1px solid red; */
+    border: 2px solid rgb(177, 48, 48);
 }
 
 #toggleButton {
@@ -75,6 +75,7 @@ span {
 }
 
 .darkmode {
+    button {background-color: rgb(156, 156, 156);}
     background-color: rgb(80, 80, 80);
     color: white;
     background-image: radial-gradient(circle at 50% 30%,rgb(110, 110, 110), rgb(28, 28, 28));
@@ -82,6 +83,7 @@ span {
 
 .lightmode {
     background-color: rgb(200, 200, 200);
+    button {background-color: white;}
     color: black;
     background-image: radial-gradient(circle at 50% 30%, white, rgb(70, 70, 70));
 }
