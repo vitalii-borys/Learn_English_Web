@@ -111,7 +111,7 @@ class DivManager {
                 const currentFontSize = parseFloat(div.style.fontSize);
                 const currentTop = parseFloat(div.style.top);
                 div.style.fontSize = `${currentFontSize - 0.8}rem`;
-                div.style.top = `${currentTop + 15}%`;
+                div.style.top = `${currentTop + 5}%`;
             });
         }, 150);
     }
@@ -166,8 +166,8 @@ myEnterButton.id = 'enterButton';
 myEnterButton.textContent = 'Enter'
 toggleButton.id = 'toggleButton';
 uaDiv.id = 'UAtext';
-aspectDiv.appendChild(toggleButton);
 document.body.appendChild(aspectDiv);
+aspectDiv.appendChild(toggleButton);
 aspectDiv.appendChild(uaDiv);
 aspectDiv.appendChild(myEnterButton);
 aspectDiv.appendChild(connectedDiv);
