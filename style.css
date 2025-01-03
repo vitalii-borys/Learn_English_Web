@@ -37,11 +37,6 @@ button {
     justify-items: center;
 }
 
-button:hover {
-    background-color: rgb(41, 43, 38);
-    color: white;
-}
-
 span {
     font-size: 3rem;
     justify-items: center;
