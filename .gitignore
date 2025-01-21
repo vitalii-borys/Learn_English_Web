@@ -1,0 +1,8 @@
+# Node modules
+node_modules/
+
+# Firebase configuration files
+.firebase/
+
+# Optional: Package lock
+package-lock.json
