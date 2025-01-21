@@ -202,7 +202,7 @@ myEnterButton.id = 'enterButton';
 myEnterButton.textContent = 'Enter'
 toggleButton.id = 'toggleButton';
 uaDiv.id = 'UAtext';
-uaDiv.textContent = 'Вітаю у грі. Натисніть "Enter" щоб почати.';
+uaDiv.textContent = 'Вітаю у грі. Натисніть "Enter" щоб почати. Гра в тестовому режимі.';
 document.body.appendChild(aspectDiv);
 aspectDiv.appendChild(toggleButton);
 aspectDiv.appendChild(uaDiv);
