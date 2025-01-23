@@ -1,6 +1,6 @@
-import { wordData } from "./wordData_test.js";
+import { wordData } from "./wordData.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
-import { getFirestore, getDoc, setDoc, doc} from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
+import { getFirestore, getDoc, setDoc, updateDoc, doc} from "https://www.gstatic.com/firebasejs/11.2.0/firebase-firestore.js";
 // https://firebase.google.com/docs/web/setup#available-libraries
 const firebaseConfig = {
   apiKey: "AIzaSyBr7wee4BXoi6rpKiQfi-beISDBdgmGMSw",
@@ -20,11 +20,12 @@ class DivManager {
         this.ENwords = wordData.ENwords;
         this.UAwords = wordData.UAwords;
         this.charToGuess = '';
-        this.wordtoguess = ''/* 'lean' */;
-        this.topUacontent = ''/* 'нахилитися' */;
-        this.shuffledData = undefined/* this.shuffleArray(wordData) */;
+        this.wordtoguess = '';
+        this.wordtoguessTranslation = '';
+        this.shuffledData = undefined
         this.currentWordIndex = 0;
         this.ENwordsLevelOne = [];
+        this.UAwordsLevelOne = [];
     }
     
     shuffleArray(arrayOfWords) {
@@ -49,20 +50,22 @@ class DivManager {
         const docSnap = await getDoc(doc(db, "wordLists", "list2"));
         this.ENwordsLevelOne = docSnap.exists() ? docSnap.data().EN1 : [];
         console.log(this.ENwordsLevelOne);
-        console.log(' is ENwordsLevelOne');
+        console.log("is ENwordsLevelOne");
+        this.UAwordsLevelOne = docSnap.exists() ? docSnap.data().UA1 : [];
+        console.log(this.UAwordsLevelOne);
+        console.log(' is UAwordsLevelOne');
     }
     
     splitWordDiv() {
         this.wordToGuess = this.shuffledData.ENwords[0];
+        this.wordtoguessTranslation = this.shuffledData.UAwords[0];
         const contentToSplit = this.wordToGuess;
-        console.log(contentToSplit + ' with index ' + this.currentWordIndex + ' is content to split')
+        console.log(contentToSplit + ' with index ' + this.currentWordIndex + ' is content to split');
         let leftPart = document.getElementById('leftText');
         let rightPart = document.getElementById('rightText');
         const myRandomCharIndex = (Math.floor(Math.random() * (contentToSplit.length - 1)) + 1);
         let divUA = document.getElementById('UAtext');
-        let myUAContent = this.shuffledData.UAwords.shift();
-        divUA.textContent = myUAContent;
-        this.topUacontent = myUAContent;
+        divUA.textContent = this.wordtoguessTranslation;
         this.charToGuess = contentToSplit.charAt(myRandomCharIndex);
         console.log(this.charToGuess + ' is assigned char to guess');
         let leftContent = contentToSplit.slice(0, myRandomCharIndex);
@@ -97,8 +100,8 @@ class DivManager {
         div.style.transition = 'opacity 0.2s, top 5s cubic-bezier(0,.82,.43,.92), font-size 5s cubic-bezier(0,.82,.43,.92)';
         aspectD.appendChild(div);
         this.divs.push(div);
-
         this.wordtoguess = this.shuffledData.ENwords.shift();
+        this.wordtoguessTranslation = this.shuffledData.UAwords.shift();
 
         setTimeout(() => {
             div.style.opacity = '1';
@@ -170,8 +173,7 @@ let divManager;
     }
 })();
 
-// Access divManager after ensuring it’s initialized
-setTimeout(() => {
+setTimeout(() => { // Access divManager after ensuring it’s initialized
     if (divManager) {
         console.log(divManager.shuffledData?.ENwords || "Shuffled data not available yet");
         console.log("is ENwords");
@@ -184,6 +186,7 @@ window.divManager = divManager; // Make it globally available
 const aspectDiv = document.createElement('div');
 const toggleButton = document.createElement('button');
 const myEnterButton = document.createElement('button');
+const removeLevelOne = document.createElement('button');
 const uaDiv = document.createElement('div');
 const connectedDiv = document.createElement('div');
 const leftDiv = document.createElement('div');
@@ -200,6 +203,8 @@ myInput.maxLength = '1';
 myInput.value = '';
 myEnterButton.id = 'enterButton';
 myEnterButton.textContent = 'Enter'
+removeLevelOne.textContent = 'Reset Level One';
+removeLevelOne.style.fontSize = '3vh';
 toggleButton.id = 'toggleButton';
 uaDiv.id = 'UAtext';
 uaDiv.textContent = 'Вітаю у грі. Натисніть "Enter" щоб почати. Гра в тестовому режимі.';
@@ -208,6 +213,7 @@ aspectDiv.appendChild(toggleButton);
 aspectDiv.appendChild(uaDiv);
 aspectDiv.appendChild(myEnterButton);
 aspectDiv.appendChild(connectedDiv);
+aspectDiv.appendChild(removeLevelOne);
 connectedDiv.appendChild(leftDiv);
 connectedDiv.appendChild(myInput);
 connectedDiv.appendChild(rightDiv);
@@ -226,9 +232,6 @@ async function fetchAndDisplayWords() {
             const enWordsDiv = document.createElement("div");
             enWordsDiv.textContent = `${enWords.join(" ")}`;
             wordsContainer.appendChild(enWordsDiv);
-            /* const uaWordsDiv = document.createElement("div");
-            uaWordsDiv.textContent = `${uaWords.join(" ")}`;
-            wordsContainer.appendChild(uaWordsDiv); */
         } else {
             wordsContainer.textContent = "No words found in the database.";
         }
@@ -244,6 +247,7 @@ button2.style.fontSize = '3vh';
 button2.addEventListener("click", fetchAndDisplayWords);
 aspectDiv.appendChild(button2);
 
+removeLevelOne.addEventListener('click', () => {removeAllWordsLevelOne();})
 toggleButton.addEventListener('click', () => {lightDarkMode();});
 myEnterButton.addEventListener('click', () => {
     if (myInput.value.toLowerCase() == divManager.charToGuess.toLowerCase()) {
@@ -257,10 +261,13 @@ myEnterButton.addEventListener('click', () => {
             console.log(myInput.value + ' & ' + divManager.charToGuess + ' are equal chars to guess');
             if (divManager.wordtoguess !== '') {
                 divManager.ENwordsLevelOne.push(divManager.wordtoguess);
+                divManager.UAwordsLevelOne.push(divManager.wordtoguessTranslation);
             }            
             setTimeout(storeWordsLevelOne, 1000);
             console.log(divManager.ENwordsLevelOne);
-            console.log('is level one');
+            console.log('is EN level one');
+            console.log(divManager.UAwordsLevelOne);
+            console.log('is UA level one');
             divManager.splitWordDiv();
             divManager.createDiv();
         }
@@ -279,18 +286,37 @@ myEnterButton.addEventListener('click', () => {
     myInput.focus();
 });
 
-/* await setDoc(doc(db, "wordLists", "list1"), { 
-    ENList: divManager.ENwords, 
-    UAList: divManager.UAwords 
-  });
-console.log("Words stored successfully!"); */
+async function storeWords() {
+    try {
+        await setDoc(doc(db, "wordLists", "list1"), { 
+            ENList: divManager.ENwords, 
+            UAList: divManager.UAwords 
+          });
+        console.log("Words stored successfully!");
+    } catch (error) {
+        console.log("Error writing document; ", error);
+    }
+}
 
 async function storeWordsLevelOne() {
     try {
         await setDoc(doc(db, "wordLists", "list2"), {
-            EN1: divManager.ENwordsLevelOne
+            EN1: divManager.ENwordsLevelOne,
+            UA1: divManager.UAwordsLevelOne
         });
         console.log("Words stored successfully!");
+    } catch (error) {
+        console.error("Error writing document: ", error);
+    }
+}
+
+async function removeAllWordsLevelOne() {
+    try {
+        await updateDoc(doc(db, "wordLists", "list2"), {
+            EN1: [],
+            UA1: []
+        });
+        console.log("Words removed successfully!");
     } catch (error) {
         console.error("Error writing document: ", error);
     }
