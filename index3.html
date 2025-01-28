@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ukrainian Word Game</title>
+    <link rel="stylesheet" href="styles3.css">
+</head>
+<body>
+    <!-- Auth Pages -->
+    <div id="loginPage" class="auth-page hidden">
+        <h2>Login</h2>
+        <div class="form-group">
+            <label for="loginEmail">Email:</label>
+            <input type="email" id="loginEmail" required>
+        </div>
+        <div class="form-group">
+            <label for="loginPassword">Password:</label>
+            <input type="password" id="loginPassword" required>
+        </div>
+        <button onclick="login()">Login</button>
+        <p>Don't have an account? <span class="link" onclick="showPage('signupPage')">Sign Up</span></p>
+    </div>
+
+    <div id="signupPage" class="auth-page hidden">
+        <h2>Sign Up</h2>
+        <div class="form-group">
+            <label for="signupEmail">Email:</label>
+            <input type="email" id="signupEmail" required>
+        </div>
+        <div class="form-group">
+            <label for="signupPassword">Password:</label>
+            <input type="password" id="signupPassword" required>
+        </div>
+        <button onclick="signup()">Sign Up</button>
+        <p>Already have an account? <span class="link" onclick="showPage('loginPage')">Login</span></p>
+    </div>
+
+    <!-- Game Page -->
+    <div id="gamePage" class="game-page hidden">
+        <div class="header">
+            <span id="userEmail"></span>
+            <button onclick="logout()" class="logout-btn">Logout</button>
+        </div>
+        
+        <div class="game-container">
+            <div class="word-pair">
+                <div class="ukrainian-word" id="ukrainianWord">слово</div>
+                <div class="english-word">
+                    <span id="engWordStart"></span>
+                    <input type="text" id="letterInput" maxlength="1">
+                    <span id="engWordEnd"></span>
+                </div>
+            </div>
+            <button onclick="checkAnswer()" id="submitBtn">Enter</button>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.9.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.9.0/firebase-auth-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.9.0/firebase-firestore-compat.min.js"></script>
+    <script src="app3.js"></script>
+</body>
+</html>
