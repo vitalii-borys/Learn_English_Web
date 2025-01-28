@@ -207,7 +207,7 @@ removeLevelOne.textContent = 'Reset Level One';
 removeLevelOne.style.fontSize = '3vh';
 toggleButton.id = 'toggleButton';
 uaDiv.id = 'UAtext';
-uaDiv.textContent = 'Вітаю у грі. Натисніть "Enter" щоб почати. Гра в тестовому режимі.';
+uaDiv.textContent = 'Вітаю у грі. Натисніть "Enter" щоб почати.';
 document.body.appendChild(aspectDiv);
 aspectDiv.appendChild(toggleButton);
 aspectDiv.appendChild(uaDiv);
