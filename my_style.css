@@ -1,0 +1,21 @@
+body {
+    background-color: lightslategray;
+    justify-self: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;  /* centers vertically */
+    min-height: 100vh;       /* makes body take full viewport height */
+    margin: 0;
+}
+
+.sign-in {
+    display: none;
+}
+
+.sign-up {
+    display: none;
+}
+
+button {
+    background-color: violet;
+}
