@@ -5,17 +5,30 @@ body {
     flex-direction: column;
     justify-content: center;  /* centers vertically */
     min-height: 100vh;       /* makes body take full viewport height */
+    min-width: 100vw;       /* makes body take full viewport height */
     margin: 0;
 }
 
 .sign-in {
-    display: none;
+    align-self: center;
 }
 
 .sign-up {
-    display: none;
+    align-self: center;
 }
 
 button {
+    align-self: center;
     background-color: violet;
+    width: 300px;
+}
+
+p {
+    align-self: center;
+    width: 300px;
+}
+
+input {
+    width: 300px;
+    align-self: center;
 }
