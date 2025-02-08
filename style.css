@@ -25,9 +25,8 @@ div {
     height: min(90.909090909vw, 100vh); /* 100/110 * 100vw */
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    /* border: 2px solid yellow; */
+    position: relative;
+    /* border: 2px solid orange; */
 }
 
 #UAtext {
@@ -42,20 +41,41 @@ div {
     text-align: center;
 }
 
-input {
-    font-size: 3rem;
+#myInput {
+    font-size: 2.3rem;
     width: 1.75rem;
     height: 2.5rem;
+    text-align: center;
+}
+
+#email {
+    font-size: 1.5rem;
+    width: 300px;
+    align-self: center;
+    justify-content: center;
+    align-items: center;
+}
+
+#password {
+    font-size: 1.5rem;
+    width: 300px;
+    align-self: center;
     justify-content: center;
     align-items: center;
 }
 
 button {
-    font-size: 3rem;
-    justify-content: center;
-    align-items: center;
+    font-size: 1.5rem;
     background-color: gray;
     color: white;
+}
+
+#statusMessage {
+    position: absolute;
+    top: 0;
+    font-size: 1.2rem;
+    width: 98%;
+    text-align: center;
 }
 
 span {
@@ -85,13 +105,32 @@ span {
 }
 
 #toggleButton {
+    position: absolute;
+    bottom: 10px;
+    left: 35%;
+    border-radius: 12px;
+    font-size: 1.15rem;
+    border: 1px solid orange;
+}
+
+#removeLevelOne {
+    position: absolute;
+    left: 0;
+    bottom: 10px;
     border-radius: 12px;
     border: none;
-    height: 2rem;
-    width: 2rem;
-    position: relative;
-    left: -43%;
-    top: 52%;
+    font-size: 1.2rem;
+    border: 1px solid red;
+}
+
+#log-out {
+    position: absolute;
+    right: 20px;
+    bottom: 10px;
+    border-radius: 12px;
+    border: none;
+    font-size: 1.25rem;
+    border: 1px solid red;
 }
 
 #connectedText {
@@ -103,7 +142,7 @@ span {
 }
 
 .darkmode {
-    button {background-color: rgb(156, 156, 156);}
+    button {background-color: rgb(112, 112, 112);}
     background-color: rgb(80, 80, 80);
     color: white;
     background-image: radial-gradient(circle at 50% 30%,rgb(110, 110, 110), rgb(28, 28, 28));
