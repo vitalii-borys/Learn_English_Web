@@ -26,7 +26,7 @@ div {
     display: flex;
     flex-direction: column;
     position: relative;
-    /* border: 2px solid orange; */
+    border: 2px solid orange;
 }
 
 #UAtext {
@@ -42,7 +42,7 @@ div {
 }
 
 #myInput {
-    font-size: 2.3rem;
+    font-size: 2.7rem;
     width: 1.75rem;
     height: 2.5rem;
     text-align: center;
@@ -134,15 +134,14 @@ span {
 }
 
 #connectedText {
-    position: relative;
+    position: absolute;
     display: flex;
     justify-content: center;
     align-items: center;
-    top: -28%;
 }
 
 .darkmode {
-    button {background-color: rgb(112, 112, 112);}
+    button {background-color: transparent;}
     background-color: rgb(80, 80, 80);
     color: white;
     background-image: radial-gradient(circle at 50% 30%,rgb(110, 110, 110), rgb(28, 28, 28));
@@ -150,7 +149,7 @@ span {
 
 .lightmode {
     background-color: rgb(200, 200, 200);
-    button {background-color: white;
+    button {background-color: transparent;
     color: black;}
     color: black;
     background-image: radial-gradient(circle at 50% 30%, white, rgb(70, 70, 70));
