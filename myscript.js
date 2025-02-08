@@ -404,6 +404,7 @@ myInput.id = 'myInput';
 myInput.type = 'text';
 myInput.setAttribute('autocapitalize', 'none');
 myInput.maxLength = '1';
+myInput.autocomplete = 'off';
 myInput.value = '';
 myInput.style.display = 'none';
 myEnterButton.id = 'enterButton';
