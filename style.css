@@ -41,7 +41,27 @@ div {
     text-align: center;
 }
 
+#username {
+    font-size: 1.5rem;
+    width: 290px;
+    align-self: center;
+    justify-content: center;
+    align-items: center;
+    border-radius: 7px;
+}
+
+#create-account {
+    font-size: 1.2rem;
+    margin: 4px;
+    border-radius: 7px;
+}
+
+#create-account:hover {
+    cursor: pointer;
+}
+
 #myInput {
+    margin: 4px;
     font-size: 2.7rem;
     width: 1.75rem;
     height: 2.5rem;
@@ -49,19 +69,42 @@ div {
 }
 
 #email {
+    margin: 4px;
     font-size: 1.5rem;
-    width: 300px;
+    width: 290px;
     align-self: center;
     justify-content: center;
     align-items: center;
+    border-radius: 7px;
+}
+
+#sign-in {
+    margin: 4px;
+    border-radius: 7px;
+}
+
+#sign-up {
+    margin: 4px;
+    border-radius: 7px;
 }
 
 #password {
+    margin: 4px;
     font-size: 1.5rem;
-    width: 300px;
+    width: 290px;
     align-self: center;
     justify-content: center;
     align-items: center;
+    border-radius: 7px;
+}
+#confirmPassword {
+    margin: 4px;
+    font-size: 1.5rem;
+    width: 290px;
+    align-self: center;
+    justify-content: center;
+    align-items: center;
+    border-radius: 7px;
 }
 
 button {

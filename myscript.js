@@ -1,7 +1,7 @@
 import { wordData } from "./wordData.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
 import { getFirestore, getDoc, setDoc, updateDoc, doc} from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
-import { getAuth, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+import { getAuth, signOut, createUserWithEmailAndPassword, sendEmailVerification, updateProfile, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
 
 // https://firebase.google.com/docs/web/setup#available-libraries
 const firebaseConfig = {
@@ -14,7 +14,6 @@ const firebaseConfig = {
   appId: "1:531312507967:web:4554f2a5718d507b8c8c8a",
   measurementId: "G-0R5Q4LWVHL"
 };
-
 
 const myApp = initializeApp(firebaseConfig);
 const auth = getAuth(myApp);
@@ -38,34 +37,45 @@ function createInput(inputType, inputPlaceholder, inputId) {
 }
 
 document.body.style.backgroundColor = '.darkmode';
+createInput('text', 'Username', 'username');
 createInput('email', 'Email', 'email');
 createInput('password', 'Password', 'password');
+createInput('password', 'Confirm password', 'confirmPassword');
 createAuthButton('Sign in', 'sign-up', 'sign-in');
 createAuthButton('Sign up', 'sign-in', 'sign-up');
 createAuthButton('Log out', 'log-out', 'log-out');
-let statusMessage = document.createElement('p');
-statusMessage.style.transition = 'opacity 8s';
-setTimeout(() => {
-    statusMessage.style.opacity = '0';
-}, 2000);
-statusMessage.textContent = pageStatus;
-statusMessage.id = 'statusMessage';
-document.body.appendChild(statusMessage);
+createAuthButton('Create account', 'create-account', 'create-account');
 
 async function signIn() {
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     if (email.trim() === '') {
         statusMessage.textContent = 'Email is required';
+        statusMessage.style.opacity = '1';
+        setTimeout(() => {
+            statusMessage.style.opacity = '0';
+        }, 2500);
         return;
     } else if (!email.includes('@')) {
         statusMessage.textContent = 'Email should contain @';
+        statusMessage.style.opacity = '1';
+        setTimeout(() => {
+            statusMessage.style.opacity = '0';
+        }, 2500);
         return;
     } else if (password.length < 6) {
         statusMessage.textContent = 'Password should be at least 6 characters long';
+        statusMessage.style.opacity = '1';
+        setTimeout(() => {
+            statusMessage.style.opacity = '0';
+        }, 2500);
         return;
-    } 
+    }
+
     statusMessage.textContent = 'Signing in...';
+    statusMessage.style.opacity = '1';
+    setTimeout(() => {statusMessage.style.opacity = "0"}, 5000);
+
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
@@ -73,10 +83,10 @@ async function signIn() {
         pageStatus = 'signed in';
         statusMessage.textContent = "Signed in successfully! Page status: " + pageStatus;
     } catch (error) {
-        // Log the full error!
         const errorCode = error.code;
         if (errorCode === "auth/invalid-credential") {
             statusMessage.textContent = "Invalid email or password. Please try again.";
+            return;
         } else if (errorCode === "auth/user-not-found") {
             statusMessage.textContent = "User not found. Please check your email or sign up.";
         } else if (errorCode === "auth/wrong-password") {
@@ -88,40 +98,77 @@ async function signIn() {
         } else {
             statusMessage.textContent = "An error occurred during login. Please try again later."; // Generic error message
         }
-
     }
-    // Clear password field for better UX (optional):
     document.getElementById('email').focus();
     document.getElementById('email').value = '';
-    setTimeout(() => {                       // Use setTimeout for UI update
-        document.getElementById('email').style.display = 'none'; // Then hide
-    }, 0);
+    document.getElementById('email').style.display = 'none';
     document.getElementById('password').focus();
     document.getElementById('password').value = '';
-    setTimeout(() => { 
     document.getElementById('password').display = 'none';
-    }, 0);
 }
 
 async function signUp() {
+    const username = document.getElementById('username').value;
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    if (username.trim() === '') {
+        statusMessage.textContent = 'Username is required';
+        statusMessage.style.opacity = '1';
+        setTimeout(() => {
+            statusMessage.style.opacity = '0';
+        }, 2500);
+        return;
+    }
     if (email.trim() === '') {
         statusMessage.textContent = 'Email is required';
+        statusMessage.style.opacity = '1';
+        setTimeout(() => {
+            statusMessage.style.opacity = '0';
+        }, 2500);
+        return;
     } else if (!email.includes('@')) {
         statusMessage.textContent = 'Email should contain @';
+        statusMessage.style.opacity = '1';
+        setTimeout(() => {
+            statusMessage.style.opacity = '0';
+        }, 2500);
+        return;
+    } else if (password !== confirmPassword) {
+        statusMessage.textContent = 'Passwords do not match';
+        statusMessage.style.opacity = '1';
+        setTimeout(() => {
+            statusMessage.style.opacity = '0';
+        }, 2500);
+        return;
     } else if (password.length < 6) {
         statusMessage.textContent = 'Password should be at least 6 characters long';
+        statusMessage.style.opacity = '1';
+        setTimeout(() => {
+            statusMessage.style.opacity = '0';
+        }, 2500);
+        return;
     } else {
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
+            /* 
+            await updateProfile(user, {
+                displayName: username
+            });
+
+            await setDoc(doc(db, 'users', user.uid))
+             */
             console.log(user);
             console.log('Signed up');
             pageStatus = 'signed in';
             statusMessage.textContent = pageStatus;
         } catch (error) {
             console.log("Credentials seems to be wrong. Can you check again, please?");
+            console.error('Error registering user:', error);
+            if (error.code === 'auth/email-already-in-use') {
+                console.error('Email address is already in use.');
+            }
         }
     }
 }
@@ -142,7 +189,28 @@ async function logOut() {
     }, 0);
 }
 
+const signUpButton = document.getElementById('sign-up');
 const signInButton = document.getElementById('sign-in');
+const logOutButton = document.getElementById('log-out');
+const createAccountButton = document.getElementById('create-account');
+let username = document.getElementById('username');
+let confirmPassword = document.getElementById('confirmPassword');
+
+let statusMessage = document.createElement('p');
+statusMessage.style.transition = 'opacity 8s';
+setTimeout(() => {
+    statusMessage.style.opacity = '0';
+}, 2000);
+
+signUpButton.style.display = 'none';
+logOutButton.style.display = 'none';
+username.style.display = 'none';
+confirmPassword.style.display = 'none';
+
+statusMessage.textContent = pageStatus;
+statusMessage.id = 'statusMessage';
+document.body.appendChild(statusMessage);
+
 signInButton.addEventListener('click', async () => {
     console.log('Sign in button clicked');
     try {
@@ -152,7 +220,6 @@ signInButton.addEventListener('click', async () => {
     }
 });
 
-const signUpButton = document.getElementById('sign-up');
 signUpButton.addEventListener('click', async () => {
     console.log('Sign up button clicked');
     try {
@@ -162,8 +229,6 @@ signUpButton.addEventListener('click', async () => {
     }
 });
 
-const logOutButton = document.getElementById('log-out');
-logOutButton.style.display = 'none';
 logOutButton.addEventListener('click', async () => {
     console.log('Log out button clicked');
     try {
@@ -173,6 +238,14 @@ logOutButton.addEventListener('click', async () => {
     }
 });
 
+createAccountButton.addEventListener('click', () => {
+    signUpButton.style.display = 'block';
+    signInButton.style.display = 'none';
+    username.style.display = 'block';
+    confirmPassword.style.display = 'block';
+    createAccountButton.style.display = 'none';
+});
+
 onAuthStateChanged(auth, (user) => {
     if (user) {
         console.log('User is signed in');
@@ -180,12 +253,13 @@ onAuthStateChanged(auth, (user) => {
         statusMessage.textContent = 'User '  + user.email + ' is signed in.';
         logOutButton.style.display = 'block';
         const aspectContainer = document.getElementById('aspect-container');
-
-        // Hide email, password, and buttons
         document.getElementById('email').style.display = 'none';
         document.getElementById('password').style.display = 'none';
         document.getElementById('sign-in').style.display = 'none';
         document.getElementById('sign-up').style.display = 'none';
+        document.getElementById('create-account').style.display = 'none';
+        document.getElementById('username').style.display = 'none';
+        document.getElementById('confirmPassword').style.display = 'none';
         aspectContainer.style.display = 'flex';
         aspectContainer.appendChild(statusMessage);
         aspectContainer.appendChild(logOutButton);
@@ -201,14 +275,13 @@ onAuthStateChanged(auth, (user) => {
         pageStatus = 'signed out';
         statusMessage.textContent = 'User is signed out.';
         logOutButton.style.display = 'none';
-        // Show email, password, and buttons
         document.getElementById('aspect-container').style.display = 'none';
         document.getElementById('email').style.display = 'block';
         document.getElementById('password').style.display = 'block';
         document.getElementById('sign-in').style.display = 'block';
-        document.getElementById('sign-up').style.display = 'block';
         document.getElementById('password').value = '';
         document.getElementById('email').value = '';
+        document.getElementById('create-account').style.display = 'block';
         document.body.appendChild(statusMessage, logOutButton, toggleButton, removeLevelOne);
         statusMessage.style.opacity = '1';
         setTimeout(() => {
@@ -397,6 +470,7 @@ const leftDiv = document.createElement('div');
 const myInput = document.createElement('input');
 const rightDiv = document.createElement('div');
 aspectDiv.id = 'aspect-container';
+aspectDiv.style.display = 'none';
 connectedDiv.id = 'connectedText';
 leftDiv.id = 'leftText';
 rightDiv.id = 'rightText';
@@ -449,7 +523,6 @@ myEnterButton.addEventListener('click', () => {
             divManager.splitWordDiv();
             divManager.createDiv();
         }
-        /* divManager.currentWordIndex = (divManager.currentWordIndex + 1) % divManager.shuffledData.ENwords.length; */
         divManager.moveAllDivsDown();
     } else {
         console.log(myInput.value + ' & ' + divManager.charToGuess + ' are not equal chars to guess');
@@ -502,5 +575,3 @@ async function removeAllWordsLevelOne() {
 }
 
 divManager.showConstructor('On start');
-
-//document.getElementById('aspect-container').style.display = 'none';
