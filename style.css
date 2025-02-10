@@ -68,6 +68,13 @@ div {
     text-align: center;
 }
 
+#back-to-sign-in {
+    font-size: 1.1rem;
+    margin: 4px;
+    border-radius: 7px;
+    display: none;
+}
+
 #email {
     margin: 4px;
     font-size: 1.5rem;
@@ -150,9 +157,9 @@ span {
 #toggleButton {
     position: absolute;
     bottom: 10px;
-    left: 35%;
+    left: 36%;
     border-radius: 12px;
-    font-size: 1.15rem;
+    font-size: 1.05rem;
     border: 1px solid orange;
 }
 
@@ -162,7 +169,7 @@ span {
     bottom: 10px;
     border-radius: 12px;
     border: none;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     border: 1px solid red;
 }
 

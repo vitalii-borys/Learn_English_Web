@@ -45,153 +45,12 @@ createAuthButton('Sign in', 'sign-up', 'sign-in');
 createAuthButton('Sign up', 'sign-in', 'sign-up');
 createAuthButton('Log out', 'log-out', 'log-out');
 createAuthButton('Create account', 'create-account', 'create-account');
-
-async function signIn() {
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    if (email.trim() === '') {
-        statusMessage.textContent = 'Email is required';
-        statusMessage.style.opacity = '1';
-        setTimeout(() => {
-            statusMessage.style.opacity = '0';
-        }, 2500);
-        return;
-    } else if (!email.includes('@')) {
-        statusMessage.textContent = 'Email should contain @';
-        statusMessage.style.opacity = '1';
-        setTimeout(() => {
-            statusMessage.style.opacity = '0';
-        }, 2500);
-        return;
-    } else if (password.length < 6) {
-        statusMessage.textContent = 'Password should be at least 6 characters long';
-        statusMessage.style.opacity = '1';
-        setTimeout(() => {
-            statusMessage.style.opacity = '0';
-        }, 2500);
-        return;
-    }
-
-    statusMessage.textContent = 'Signing in...';
-    statusMessage.style.opacity = '1';
-    setTimeout(() => {statusMessage.style.opacity = "0"}, 5000);
-
-    try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        console.log("User signed in: " + user.email);
-        pageStatus = 'signed in';
-        statusMessage.textContent = "Signed in successfully! Page status: " + pageStatus;
-    } catch (error) {
-        const errorCode = error.code;
-        if (errorCode === "auth/invalid-credential") {
-            statusMessage.textContent = "Invalid email or password. Please try again.";
-            return;
-        } else if (errorCode === "auth/user-not-found") {
-            statusMessage.textContent = "User not found. Please check your email or sign up.";
-        } else if (errorCode === "auth/wrong-password") {
-            statusMessage.textContent = "Incorrect password. Please try again.";
-        } else if (errorCode === "auth/too-many-requests") {
-            statusMessage.textContent = "Too many attempts. Please try again later."; // Handle rate limiting
-        } else if (errorCode === "auth/email-already-in-use") {
-            statusMessage.textContent = "Email is already in use. Please sign in or use a different email.";
-        } else {
-            statusMessage.textContent = "An error occurred during login. Please try again later."; // Generic error message
-        }
-    }
-    document.getElementById('email').focus();
-    document.getElementById('email').value = '';
-    document.getElementById('email').style.display = 'none';
-    document.getElementById('password').focus();
-    document.getElementById('password').value = '';
-    document.getElementById('password').display = 'none';
-}
-
-async function signUp() {
-    const username = document.getElementById('username').value;
-    const email = document.getElementById('email').value;
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
-    if (username.trim() === '') {
-        statusMessage.textContent = 'Username is required';
-        statusMessage.style.opacity = '1';
-        setTimeout(() => {
-            statusMessage.style.opacity = '0';
-        }, 2500);
-        return;
-    }
-    if (email.trim() === '') {
-        statusMessage.textContent = 'Email is required';
-        statusMessage.style.opacity = '1';
-        setTimeout(() => {
-            statusMessage.style.opacity = '0';
-        }, 2500);
-        return;
-    } else if (!email.includes('@')) {
-        statusMessage.textContent = 'Email should contain @';
-        statusMessage.style.opacity = '1';
-        setTimeout(() => {
-            statusMessage.style.opacity = '0';
-        }, 2500);
-        return;
-    } else if (password !== confirmPassword) {
-        statusMessage.textContent = 'Passwords do not match';
-        statusMessage.style.opacity = '1';
-        setTimeout(() => {
-            statusMessage.style.opacity = '0';
-        }, 2500);
-        return;
-    } else if (password.length < 6) {
-        statusMessage.textContent = 'Password should be at least 6 characters long';
-        statusMessage.style.opacity = '1';
-        setTimeout(() => {
-            statusMessage.style.opacity = '0';
-        }, 2500);
-        return;
-    } else {
-        try {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const user = userCredential.user;
-            /* 
-            await updateProfile(user, {
-                displayName: username
-            });
-
-            await setDoc(doc(db, 'users', user.uid))
-             */
-            console.log(user);
-            console.log('Signed up');
-            pageStatus = 'signed in';
-            statusMessage.textContent = pageStatus;
-        } catch (error) {
-            console.log("Credentials seems to be wrong. Can you check again, please?");
-            console.error('Error registering user:', error);
-            if (error.code === 'auth/email-already-in-use') {
-                console.error('Email address is already in use.');
-            }
-        }
-    }
-}
-
-async function logOut() {
-    try {
-        await signOut(auth);
-        pageStatus = 'signed out';
-        statusMessage.textContent = 'User signed out. Page status: ' + pageStatus;
-    } catch (error) {
-        console.log("An error occurred while signing out");
-    }
-    setTimeout(() => { 
-    document.getElementById('email').display = 'block';
-    }, 0);
-    setTimeout(() => { 
-    document.getElementById('password').display = 'block';
-    }, 0);
-}
+createAuthButton('Back to sign in', 'sign-in', 'back-to-sign-in');
 
 const signUpButton = document.getElementById('sign-up');
 const signInButton = document.getElementById('sign-in');
 const logOutButton = document.getElementById('log-out');
+const backToSignInButton = document.getElementById('back-to-sign-in');
 const createAccountButton = document.getElementById('create-account');
 let username = document.getElementById('username');
 let confirmPassword = document.getElementById('confirmPassword');
@@ -234,11 +93,28 @@ logOutButton.addEventListener('click', async () => {
     try {
         await logOut();
     } catch (error) {
-        console.log("An error occurred while loging out. Hello from button.");
+        console.error("An error occurred while signing out:", error);
+        if (error.code === 'auth/invalid-email') {
+            console.error("Invalid email address.");
+        } else if (error.code === 'auth/user-not-found') {
+            console.error("User not found.");
+        } else {
+            console.error("An unexpected authentication error occurred.");
+        }
     }
 });
 
+backToSignInButton.addEventListener('click', () => {
+    backToSignInButton.style.display = 'none';
+    signUpButton.style.display = 'none';
+    signInButton.style.display = 'block';
+    username.style.display = 'none';
+    confirmPassword.style.display = 'none';
+    createAccountButton.style.display = 'block';
+})
+
 createAccountButton.addEventListener('click', () => {
+    backToSignInButton.style.display = 'block';
     signUpButton.style.display = 'block';
     signInButton.style.display = 'none';
     username.style.display = 'block';
@@ -260,6 +136,7 @@ onAuthStateChanged(auth, (user) => {
         document.getElementById('create-account').style.display = 'none';
         document.getElementById('username').style.display = 'none';
         document.getElementById('confirmPassword').style.display = 'none';
+        document.getElementById('back-to-sign-in').style.display = 'none';
         aspectContainer.style.display = 'flex';
         aspectContainer.appendChild(statusMessage);
         aspectContainer.appendChild(logOutButton);
@@ -453,7 +330,7 @@ let divManager;
 setTimeout(() => { // Access divManager after ensuring it’s initialized
     if (divManager) {
         console.log(divManager.shuffledData?.ENwords || "Shuffled data not available yet");
-        console.log("is ENwords");
+        console.log("is shuffled ENwords");
     } else {
         console.log("divManager not initialized yet.");
     }
@@ -572,6 +449,150 @@ async function removeAllWordsLevelOne() {
     } catch (error) {
         console.error("Error writing document: ", error);
     }
+}
+
+async function signIn() {
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    if (email.trim() === '') {
+        statusMessage.textContent = 'Email is required';
+        statusMessage.style.opacity = '1';
+        setTimeout(() => {
+            statusMessage.style.opacity = '0';
+        }, 2500);
+        return;
+    } else if (!email.includes('@')) {
+        statusMessage.textContent = 'Email should contain @';
+        statusMessage.style.opacity = '1';
+        setTimeout(() => {
+            statusMessage.style.opacity = '0';
+        }, 2500);
+        return;
+    } else if (password.length < 6) {
+        statusMessage.textContent = 'Password should be at least 6 characters long';
+        statusMessage.style.opacity = '1';
+        setTimeout(() => {
+            statusMessage.style.opacity = '0';
+        }, 2500);
+        return;
+    }
+
+    statusMessage.textContent = 'Signing in...';
+    statusMessage.style.opacity = '1';
+    setTimeout(() => {statusMessage.style.opacity = "0"}, 5000);
+
+    try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+        console.log("User signed in: " + user.email);
+        pageStatus = 'signed in';
+        statusMessage.textContent = "Signed in successfully! Page status: " + pageStatus;
+    } catch (error) {
+        const errorCode = error.code;
+        if (errorCode === "auth/invalid-credential") {
+            statusMessage.textContent = "Invalid email or password. Please try again.";
+            return;
+        } else if (errorCode === "auth/user-not-found") {
+            statusMessage.textContent = "User not found. Please check your email or sign up.";
+        } else if (errorCode === "auth/wrong-password") {
+            statusMessage.textContent = "Incorrect password. Please try again.";
+        } else if (errorCode === "auth/too-many-requests") {
+            statusMessage.textContent = "Too many attempts. Please try again later."; // Handle rate limiting
+        } else if (errorCode === "auth/email-already-in-use") {
+            statusMessage.textContent = "Email is already in use. Please sign in or use a different email.";
+        } else {
+            statusMessage.textContent = "An error occurred during login. Please try again later."; // Generic error message
+        }
+    }
+    /* document.getElementById('email').focus(); */
+    document.getElementById('email').value = '';
+    document.getElementById('email').style.display = 'none';
+    /* document.getElementById('password').focus(); */
+    document.getElementById('password').value = '';
+    document.getElementById('password').display = 'none';
+}
+
+async function signUp() {
+    const username = document.getElementById('username').value;
+    const email = document.getElementById('email').value;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    if (username.trim() === '') {
+        statusMessage.textContent = 'Username is required';
+        statusMessage.style.opacity = '1';
+        setTimeout(() => {
+            statusMessage.style.opacity = '0';
+        }, 2500);
+        return;
+    }
+    if (email.trim() === '') {
+        statusMessage.textContent = 'Email is required';
+        statusMessage.style.opacity = '1';
+        setTimeout(() => {
+            statusMessage.style.opacity = '0';
+        }, 2500);
+        return;
+    } else if (!email.includes('@')) {
+        statusMessage.textContent = 'Email should contain @';
+        statusMessage.style.opacity = '1';
+        setTimeout(() => {
+            statusMessage.style.opacity = '0';
+        }, 2500);
+        return;
+    } else if (password !== confirmPassword) {
+        statusMessage.textContent = 'Passwords do not match';
+        statusMessage.style.opacity = '1';
+        setTimeout(() => {
+            statusMessage.style.opacity = '0';
+        }, 2500);
+        return;
+    } else if (password.length < 6) {
+        statusMessage.textContent = 'Password should be at least 6 characters long';
+        statusMessage.style.opacity = '1';
+        setTimeout(() => {
+            statusMessage.style.opacity = '0';
+        }, 2500);
+        return;
+    } else {
+        try {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const user = userCredential.user;
+            /* 
+            await updateProfile(user, {
+                displayName: username
+            });
+
+            await setDoc(doc(db, 'users', user.uid))
+             */
+            console.log(user);
+            console.log('Signed up');
+            pageStatus = 'signed in';
+            statusMessage.textContent = pageStatus;
+        } catch (error) {
+            console.log("Credentials seems to be wrong. Can you check again, please?");
+            console.error('Error registering user:', error);
+            if (error.code === 'auth/email-already-in-use') {
+                console.error('Email address is already in use.');
+            }
+        }
+    }
+}
+
+async function logOut() {
+    try {
+        await signOut(auth);
+        pageStatus = 'signed out';
+        statusMessage.textContent = 'User signed out. Page status: ' + pageStatus;
+        statusMessage.style.opacity = '1';
+        setTimeout(() => {
+            statusMessage.style.opacity = '0';
+        }, 2000);
+        window.location.reload();
+    } catch (error) {
+        console.log("An error occurred while signing out");
+    }
+    document.getElementById('email').display = 'block';
+    document.getElementById('password').display = 'block';
 }
 
 divManager.showConstructor('On start');
