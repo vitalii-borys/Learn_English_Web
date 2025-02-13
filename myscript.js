@@ -391,7 +391,7 @@ myEnterButton.addEventListener('click', () => {
                 divManager.ENwordsLevelOne.push(divManager.wordtoguess);
                 divManager.UAwordsLevelOne.push(divManager.wordtoguessTranslation);
             }            
-            setTimeout(storeWordsLevelOne, 1000);
+            setTimeout(storeWordsLevelOne, 2000);
             console.log(divManager.ENwordsLevelOne);
             console.log('is EN level one');
             console.log(divManager.UAwordsLevelOne);
@@ -564,12 +564,12 @@ async function signUp() {
                 displayName: username
             });
 
-            await setDoc(doc(db, 'users', user.uid)), {
+            await setDoc(doc(db, 'users', user.uid), {
                 username: username,
                 email: user.email,
                 createdAt: new Date()
                 //emailVerified: false
-            }
+            });
             
             console.log('User signed up and profile created');
             pageStatus = 'signed in';
