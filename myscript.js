@@ -223,7 +223,7 @@ class DivManager {
         };
     }
 
-    async initialize() {
+/*     async initialize() {
         const docSnap = await getDoc(doc(db, "wordLists", "list2"));
         this.ENwordsLevelOne = docSnap.exists() ? docSnap.data().EN1 : [];
         console.log(this.ENwordsLevelOne);
@@ -231,6 +231,50 @@ class DivManager {
         this.UAwordsLevelOne = docSnap.exists() ? docSnap.data().UA1 : [];
         console.log(this.UAwordsLevelOne);
         console.log(' is UAwordsLevelOne');
+
+        if (getAuth().currentUser) {
+            this.userId = getAuth().currentUser.uid;
+            console.log("User UID:", this.userId);
+            document.getElementById('usernameDisplay').textContent = this.userId;
+        } else {
+            console.log("No user is signed in.");
+        }
+        const docSnapUserDisplay = await getDoc(doc(db, "users", this.userId));
+        if (docSnapUserDisplay.exists()) {
+            document.getElementById('usernameDisplay').textContent = docSnapUserDisplay.data().username + ' ' + docSnap.data().EN1.length;
+        } else {
+            console.log('No such document!');
+        }
+    } */
+    async loadWordLists() {
+        const docSnap = await getDoc(doc(db, "wordLists", "list2"));
+        this.ENwordsLevelOne = docSnap.exists() ? docSnap.data().EN1 : [];
+        console.log(this.ENwordsLevelOne);
+        console.log("is ENwordsLevelOne");
+        this.UAwordsLevelOne = docSnap.exists() ? docSnap.data().UA1 : [];
+        console.log(this.UAwordsLevelOne);
+        console.log(' is UAwordsLevelOne');
+    }
+        
+    async loadAndDisplayUserInfo() {
+        if (getAuth().currentUser) {
+            this.userId = getAuth().currentUser.uid;
+            console.log("User UID:", this.userId);
+        
+            const docSnapUserDisplay = await getDoc(doc(db, "users", this.userId));
+            if (docSnapUserDisplay.exists()) {
+                document.getElementById('usernameDisplay').textContent = docSnapUserDisplay.data().username + ' ' + this.ENwordsLevelOne.length; // Accessing ENwordsLevelOne here
+            } else {
+                console.log('No such document!');
+            }
+        } else {
+            console.log("No user is signed in.");
+        }
+    }
+    
+    async initialize() {
+        await this.loadWordLists();
+        await this.loadAndDisplayUserInfo();
     }
     
     splitWordDiv() {
@@ -337,6 +381,7 @@ document.addEventListener('keydown', (myEvent) => {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const aspectDiv = document.createElement('div');
+const userNameDisplay = document.createElement('div');
 const toggleButton = document.createElement('button');
 const myEnterButton = document.createElement('button');
 const removeLevelOne = document.createElement('button');
@@ -346,6 +391,7 @@ const leftDiv = document.createElement('div');
 const myInput = document.createElement('input');
 const rightDiv = document.createElement('div');
 aspectDiv.id = 'aspect-container';
+userNameDisplay.id = 'usernameDisplay';
 aspectDiv.style.display = 'none';
 connectedDiv.id = 'connectedText';
 leftDiv.id = 'leftText';
@@ -366,6 +412,7 @@ toggleButton.textContent = 'Light/Dark Mode';
 uaDiv.id = 'UAtext';
 uaDiv.textContent = 'Вітаю у грі. Натисніть "Enter" щоб почати.';
 document.body.appendChild(aspectDiv);
+document.body.appendChild(userNameDisplay);
 document.body.appendChild(toggleButton);
 aspectDiv.appendChild(uaDiv);
 aspectDiv.appendChild(myEnterButton);
@@ -392,6 +439,7 @@ myEnterButton.addEventListener('click', () => {
                 divManager.UAwordsLevelOne.push(divManager.wordtoguessTranslation);
             }            
             setTimeout(storeWordsLevelOne, 2000);
+            divManager.loadAndDisplayUserInfo();
             console.log(divManager.ENwordsLevelOne);
             console.log('is EN level one');
             console.log(divManager.UAwordsLevelOne);
