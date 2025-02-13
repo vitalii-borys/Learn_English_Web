@@ -36,7 +36,6 @@ function createInput(inputType, inputPlaceholder, inputId) {
     document.body.appendChild(input);
 }
 
-document.body.style.backgroundColor = '.darkmode';
 createInput('text', 'Username', 'username');
 createInput('email', 'Email', 'email');
 createInput('password', 'Password', 'password');
@@ -56,7 +55,7 @@ let username = document.getElementById('username');
 let confirmPassword = document.getElementById('confirmPassword');
 
 let statusMessage = document.createElement('p');
-statusMessage.style.transition = 'opacity 8s';
+statusMessage.style.transition = 'opacity 6s';
 setTimeout(() => {
     statusMessage.style.opacity = '0';
 }, 2000);
@@ -140,9 +139,33 @@ onAuthStateChanged(auth, (user) => {
         aspectContainer.style.display = 'flex';
         aspectContainer.appendChild(statusMessage);
         aspectContainer.appendChild(logOutButton);
-        aspectContainer.appendChild(toggleButton);
         aspectContainer.appendChild(removeLevelOne);
-        document.body.appendChild(statusMessage, logOutButton, toggleButton, removeLevelOne);
+        document.body.appendChild(statusMessage, logOutButton, removeLevelOne);
+        let divManager;
+
+        (async () => {
+            divManager = new DivManager(wordData); // Assign instance to the outer variable
+            try {
+                await divManager.initialize(); // Wait for initialization to complete
+                divManager.shuffledData = divManager.shuffleArray(wordData); // Execute after initialization
+                console.log(divManager.shuffledData);
+                console.log(' is shuffledData');
+            } catch (error) {
+                console.error("Error during initialization:", error);
+            }
+        })();
+        
+        setTimeout(() => { // Access divManager after ensuring it’s initialized
+            if (divManager) {
+                console.log(divManager.shuffledData?.ENwords || "Shuffled data not available yet");
+                console.log("is shuffled ENwords");
+            } else {
+                console.log("divManager not initialized yet.");
+            }
+        }, 1100); // Add a delay to allow asynchronous operation to complete
+        
+        window.divManager = divManager; // Make it globally available
+        
         statusMessage.style.opacity = '1';
         setTimeout(() => {
             statusMessage.style.opacity = '0';
@@ -159,7 +182,7 @@ onAuthStateChanged(auth, (user) => {
         document.getElementById('password').value = '';
         document.getElementById('email').value = '';
         document.getElementById('create-account').style.display = 'block';
-        document.body.appendChild(statusMessage, logOutButton, toggleButton, removeLevelOne);
+        document.body.appendChild(statusMessage, logOutButton, removeLevelOne);
         statusMessage.style.opacity = '1';
         setTimeout(() => {
             statusMessage.style.opacity = '0';
@@ -313,30 +336,6 @@ document.addEventListener('keydown', (myEvent) => {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-let divManager;
-
-(async () => {
-    divManager = new DivManager(wordData); // Assign instance to the outer variable
-    try {
-        await divManager.initialize(); // Wait for initialization to complete
-        divManager.shuffledData = divManager.shuffleArray(wordData); // Execute after initialization
-        console.log(divManager.shuffledData);
-        console.log(' is shuffledData');
-    } catch (error) {
-        console.error("Error during initialization:", error);
-    }
-})();
-
-setTimeout(() => { // Access divManager after ensuring it’s initialized
-    if (divManager) {
-        console.log(divManager.shuffledData?.ENwords || "Shuffled data not available yet");
-        console.log("is shuffled ENwords");
-    } else {
-        console.log("divManager not initialized yet.");
-    }
-}, 1100); // Add a delay to allow asynchronous operation to complete
-
-window.divManager = divManager; // Make it globally available
 const aspectDiv = document.createElement('div');
 const toggleButton = document.createElement('button');
 const myEnterButton = document.createElement('button');
@@ -367,7 +366,7 @@ toggleButton.textContent = 'Light/Dark Mode';
 uaDiv.id = 'UAtext';
 uaDiv.textContent = 'Вітаю у грі. Натисніть "Enter" щоб почати.';
 document.body.appendChild(aspectDiv);
-aspectDiv.appendChild(toggleButton);
+document.body.appendChild(toggleButton);
 aspectDiv.appendChild(uaDiv);
 aspectDiv.appendChild(myEnterButton);
 aspectDiv.appendChild(connectedDiv);
@@ -557,24 +556,35 @@ async function signUp() {
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
-            /* 
+
+            // Send email verification
+            //await sendEmailVerification(user);
+            
             await updateProfile(user, {
                 displayName: username
             });
 
-            await setDoc(doc(db, 'users', user.uid))
-             */
-            console.log(user);
-            console.log('Signed up');
+            await setDoc(doc(db, 'users', user.uid)), {
+                username: username,
+                email: user.email,
+                createdAt: new Date()
+                //emailVerified: false
+            }
+            
+            console.log('User signed up and profile created');
             pageStatus = 'signed in';
             statusMessage.textContent = pageStatus;
         } catch (error) {
-            console.log("Credentials seems to be wrong. Can you check again, please?");
             console.error('Error registering user:', error);
             if (error.code === 'auth/email-already-in-use') {
-                console.error('Email address is already in use.');
+                statusMessage.textContent = 'Email address is already in use.';
             }
         }
+
+        statusMessage.style.opacity = '1';
+        setTimeout(() => {
+            statusMessage.style.opacity = '0';
+        }, 2500);
     }
 }
 
@@ -595,4 +605,4 @@ async function logOut() {
     document.getElementById('password').display = 'block';
 }
 
-divManager.showConstructor('On start');
+//divManager.showConstructor('On start');
