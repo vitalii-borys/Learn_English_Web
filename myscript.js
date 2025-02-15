@@ -122,7 +122,7 @@ createAccountButton.addEventListener('click', () => {
 });
 
 onAuthStateChanged(auth, (user) => {
-    if (user) {
+    if (user && user.emailVerified) {
         console.log('User is signed in');
         pageStatus = 'signed in';
         statusMessage.textContent = 'User '  + user.email + ' is signed in.';
@@ -505,14 +505,25 @@ async function signIn() {
 
     statusMessage.textContent = 'Signing in...';
     statusMessage.style.opacity = '1';
-    setTimeout(() => {statusMessage.style.opacity = "0"}, 5000);
+    //setTimeout(() => {statusMessage.style.opacity = "0"}, 5000);
 
     try {
         const userCredential = await signInWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
-        console.log("User signed in: " + user.email);
-        pageStatus = 'signed in';
-        statusMessage.textContent = "Signed in successfully! Page status: " + pageStatus;
+        if (!user.emailVerified) {
+            pageStatus = 'signed out';
+            statusMessage.textContent = 'Email is not verified. User ' + user.email + ' is signed out.';
+        } else {
+            console.log("User signed in: " + user.email);
+            pageStatus = 'signed in';
+            /* document.getElementById('email').focus(); */
+            document.getElementById('email').value = '';
+            //document.getElementById('email').style.display = 'none';
+            /* document.getElementById('password').focus(); */
+            //document.getElementById('password').value = '';
+            document.getElementById('password').style.display = 'none';
+            statusMessage.textContent = "Signed in successfully! Page status: " + pageStatus;
+        }
     } catch (error) {
         const errorCode = error.code;
         if (errorCode === "auth/invalid-credential") {
@@ -530,12 +541,6 @@ async function signIn() {
             statusMessage.textContent = "An error occurred during login. Please try again later."; // Generic error message
         }
     }
-    /* document.getElementById('email').focus(); */
-    document.getElementById('email').value = '';
-    document.getElementById('email').style.display = 'none';
-    /* document.getElementById('password').focus(); */
-    document.getElementById('password').value = '';
-    document.getElementById('password').display = 'none';
 }
 
 async function signUp() {
@@ -585,7 +590,20 @@ async function signUp() {
             const user = userCredential.user;
 
             // Send email verification
-            //await sendEmailVerification(user);
+            await sendEmailVerification(user);
+
+            document.getElementById('email').style.display = 'none';
+            document.getElementById('password').style.display = 'none';
+            document.getElementById('sign-in').style.display = 'none';
+            document.getElementById('sign-up').style.display = 'none';
+            document.getElementById('create-account').style.display = 'none';
+            document.getElementById('username').style.display = 'none';
+            document.getElementById('confirmPassword').style.display = 'none';
+            document.getElementById('back-to-sign-in').style.display = 'none';
+            console.log('User signed up and profile created');
+            //pageStatus = 'signed in';
+
+            alert('Verification emain sent! Please check your inbox.');
             
             await updateProfile(user, {
                 displayName: username
@@ -597,10 +615,7 @@ async function signUp() {
                 createdAt: new Date()
                 //emailVerified: false
             });
-            
-            console.log('User signed up and profile created');
-            pageStatus = 'signed in';
-            statusMessage.textContent = pageStatus;
+            statusMessage.textContent = 'User signed up and profile created';
         } catch (error) {
             console.error('Error registering user:', error);
             if (error.code === 'auth/email-already-in-use') {
@@ -608,10 +623,13 @@ async function signUp() {
             }
         }
 
+        //backToSignInButton.click();
+        //window.location.reload();
+
         statusMessage.style.opacity = '1';
-        setTimeout(() => {
+        /* setTimeout(() => {
             statusMessage.style.opacity = '0';
-        }, 2500);
+        }, 2500); */
     }
 }
 
