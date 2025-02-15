@@ -41,6 +41,12 @@ div {
     text-align: center;
 }
 
+#usernameDisplay {
+    font-size: 1.25rem;
+    position: absolute;
+    bottom: 2rem;
+}
+
 #username {
     font-size: 1.5rem;
     width: 290px;

@@ -223,29 +223,6 @@ class DivManager {
         };
     }
 
-/*     async initialize() {
-        const docSnap = await getDoc(doc(db, "wordLists", "list2"));
-        this.ENwordsLevelOne = docSnap.exists() ? docSnap.data().EN1 : [];
-        console.log(this.ENwordsLevelOne);
-        console.log("is ENwordsLevelOne");
-        this.UAwordsLevelOne = docSnap.exists() ? docSnap.data().UA1 : [];
-        console.log(this.UAwordsLevelOne);
-        console.log(' is UAwordsLevelOne');
-
-        if (getAuth().currentUser) {
-            this.userId = getAuth().currentUser.uid;
-            console.log("User UID:", this.userId);
-            document.getElementById('usernameDisplay').textContent = this.userId;
-        } else {
-            console.log("No user is signed in.");
-        }
-        const docSnapUserDisplay = await getDoc(doc(db, "users", this.userId));
-        if (docSnapUserDisplay.exists()) {
-            document.getElementById('usernameDisplay').textContent = docSnapUserDisplay.data().username + ' ' + docSnap.data().EN1.length;
-        } else {
-            console.log('No such document!');
-        }
-    } */
     async loadWordLists() {
         const docSnap = await getDoc(doc(db, "wordLists", "list2"));
         this.ENwordsLevelOne = docSnap.exists() ? docSnap.data().EN1 : [];
@@ -344,10 +321,12 @@ class DivManager {
     moveAllDivsDown() {
         setTimeout(() => {
             this.divs.forEach((div) => {
+                //div.style.border = '1px solid red';
                 const currentFontSize = parseFloat(div.style.fontSize);
                 const currentTop = parseFloat(div.style.top);
+                //console.log(currentTop);
                 div.style.fontSize = `${currentFontSize - 0.8}rem`;
-                div.style.top = `${currentTop + 5}%`;
+                div.style.top = `${currentTop + 7}%`;
             });
         }, 150);
     }
@@ -412,12 +391,12 @@ toggleButton.textContent = 'Light/Dark Mode';
 uaDiv.id = 'UAtext';
 uaDiv.textContent = 'Вітаю у грі. Натисніть "Enter" щоб почати.';
 document.body.appendChild(aspectDiv);
-document.body.appendChild(userNameDisplay);
-document.body.appendChild(toggleButton);
 aspectDiv.appendChild(uaDiv);
 aspectDiv.appendChild(myEnterButton);
 aspectDiv.appendChild(connectedDiv);
 aspectDiv.appendChild(removeLevelOne);
+aspectDiv.appendChild(userNameDisplay);
+aspectDiv.appendChild(toggleButton);
 connectedDiv.appendChild(leftDiv);
 connectedDiv.appendChild(myInput);
 connectedDiv.appendChild(rightDiv);
