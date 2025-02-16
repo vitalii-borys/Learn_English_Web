@@ -1,7 +1,7 @@
 import { wordData } from "./wordData.js";
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-app.js";
 import { getFirestore, getDoc, setDoc, updateDoc, doc} from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
-import { getAuth, signOut, createUserWithEmailAndPassword, sendEmailVerification, updateProfile, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
+import { getAuth, applyActionCode, signOut, createUserWithEmailAndPassword, sendEmailVerification, updateProfile, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
 
 // https://firebase.google.com/docs/web/setup#available-libraries
 const firebaseConfig = {
@@ -17,6 +17,64 @@ const firebaseConfig = {
 
 const myApp = initializeApp(firebaseConfig);
 const auth = getAuth(myApp);
+
+// Create a container for the UI
+const container = document.createElement("div");
+container.id = 'container';
+document.body.appendChild(container);
+
+// Create a heading element to display status messages
+const statusHeading = document.createElement("span");
+statusHeading.style.fontSize = '1.8rem'
+statusHeading.id = "status";
+container.appendChild(statusHeading);
+
+// Create the "Confirm Email" button
+const confirmButton = document.createElement("button");
+confirmButton.id = "confirmBtn";
+confirmButton.textContent = "Confirm Email";
+container.appendChild(confirmButton);
+
+// Create the "Continue to Website" button (hidden by default)
+const continueButton = document.createElement("button");
+continueButton.id = "continueBtn";
+continueButton.textContent = "Continue to Website";
+continueButton.style.display = "none";
+container.appendChild(continueButton);
+
+// When clicked, the Continue button redirects the user
+continueButton.addEventListener("click", () => {
+  window.location.href = "http://127.0.0.1:5500/index.html";
+});
+
+// Define the confirmEmail function which verifies the email using URL parameters
+function confirmEmail() {
+  // Parse URL parameters for mode and oobCode
+  const urlParams = new URLSearchParams(window.location.search);
+  const mode = urlParams.get("mode");
+  const oobCode = urlParams.get("oobCode");
+
+  // Check if the URL is valid for email verification
+  if (mode === "verifyEmail" && oobCode) {
+    applyActionCode(auth, oobCode)
+      .then(() => {
+        // Email successfully verified
+        statusHeading.textContent = "Your email has been verified!";
+        // Hide the Confirm Email button and show the Continue button
+        confirmButton.style.display = "none";
+        continueButton.style.display = "inline-block";
+      })
+      .catch((error) => {
+        console.error("Error verifying email:", error);
+        statusHeading.textContent = "There was an error verifying your email.";
+      });
+  } else {
+    statusHeading.textContent = "Invalid verification link.";
+  }
+}
+
+// Attach the confirmEmail function to the Confirm Email button's click event
+confirmButton.addEventListener("click", confirmEmail);
 
 let pageStatus = 'signed out';
 function createAuthButton(buttonTextContent, buttonClassName, buttonId) {
@@ -187,6 +245,25 @@ onAuthStateChanged(auth, (user) => {
         setTimeout(() => {
             statusMessage.style.opacity = '0';
         }, 2000);
+    }
+    const urlParams = new URLSearchParams(window.location.search);
+    const mode = urlParams.get("mode");
+    const oobCode = urlParams.get("oobCode");
+
+    console.log("Mode:", mode);  // Check the value of mode
+    console.log("oobCode:", oobCode); // Check the value of oobCode
+
+    if (mode === "verifyEmail" && oobCode) {
+        console.log('Hello World');
+        console.log(document.getElementById('email'));
+        document.getElementById('container').style.display = 'flex';
+        document.getElementById('email').style.display = 'none';
+        document.getElementById('password').style.display = 'none';
+        document.getElementById('sign-in').style.display = 'none';
+        document.getElementById('create-account').style.display = 'none';
+    } else if (mode !== "verifyEmail") {
+        document.getElementById('container').style.display = 'none';
+        console.log("Not verify email page")
     }
 })
 
@@ -588,6 +665,13 @@ async function signUp() {
         try {
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
+
+            const actionCodeSettings = {
+                // The URL to your custom verification page
+                url: 'http://127.0.0.1:5500/index.html',
+                // Tells Firebase to not handle the code automatically
+                handleCodeInApp: true,
+              };
 
             // Send email verification
             await sendEmailVerification(user);

@@ -18,6 +18,11 @@ div {
     align-items: center;
     /* border: 1px solid black; */
 }
+
+#container {
+    display: flex;
+    flex-direction: column;
+}
  
 #aspect-container {
     aspect-ratio: 11/10;
