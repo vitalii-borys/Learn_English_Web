@@ -45,7 +45,28 @@ container.appendChild(continueButton);
 // When clicked, the Continue button redirects the user
 continueButton.addEventListener("click", () => {
   window.location.href = "https://vitalii-borys.github.io/Learn_English_Web/";
+  //window.location.href = "http://127.0.0.1:5500/index.html";
 });
+
+const urlParams = new URLSearchParams(window.location.search);
+const mode = urlParams.get("mode");
+const oobCode = urlParams.get("oobCode");
+
+console.log("Mode:", mode);  // Check the value of mode
+console.log("oobCode:", oobCode); // Check the value of oobCode
+
+if (mode === "verifyEmail" && oobCode) {
+    console.log('Hello World');
+    console.log(document.getElementById('email'));
+    document.getElementById('container').style.display = 'flex';
+    document.getElementById('email').style.display = 'none';
+    document.getElementById('password').style.display = 'none';
+    document.getElementById('sign-in').style.display = 'none';
+    document.getElementById('create-account').style.display = 'none';
+} else if (mode !== "verifyEmail") {
+    document.getElementById('container').style.display = 'none';
+    console.log("Not verify email page")
+}
 
 // Define the confirmEmail function which verifies the email using URL parameters
 function confirmEmail() {
@@ -181,6 +202,12 @@ createAccountButton.addEventListener('click', () => {
 
 onAuthStateChanged(auth, (user) => {
     if (user && user.emailVerified) {
+        const firstSignIn = document.createElement('span');
+        firstSignIn.id = 'first-sign-in';
+        firstSignIn.textContent = 'Перший запуск триває довше ніж наступні';
+        firstSignIn.style.fontSize = '1.8rem';
+        firstSignIn.style.alignContent = 'center';
+        document.body.appendChild(firstSignIn);
         console.log('User is signed in');
         pageStatus = 'signed in';
         statusMessage.textContent = 'User '  + user.email + ' is signed in.';
@@ -194,7 +221,7 @@ onAuthStateChanged(auth, (user) => {
         document.getElementById('username').style.display = 'none';
         document.getElementById('confirmPassword').style.display = 'none';
         document.getElementById('back-to-sign-in').style.display = 'none';
-        aspectContainer.style.display = 'flex';
+        aspectContainer.style.display = 'none';
         aspectContainer.appendChild(statusMessage);
         aspectContainer.appendChild(logOutButton);
         aspectContainer.appendChild(removeLevelOne);
@@ -205,6 +232,8 @@ onAuthStateChanged(auth, (user) => {
             divManager = new DivManager(wordData); // Assign instance to the outer variable
             try {
                 await divManager.initialize(); // Wait for initialization to complete
+                document.getElementById('first-sign-in').style.display = 'none';
+                document.getElementById('aspect-container').style.display = 'flex';
                 divManager.shuffledData = divManager.shuffleArray(wordData); // Execute after initialization
                 console.log(divManager.shuffledData);
                 console.log(' is shuffledData');
@@ -245,25 +274,6 @@ onAuthStateChanged(auth, (user) => {
         setTimeout(() => {
             statusMessage.style.opacity = '0';
         }, 2000);
-    }
-    const urlParams = new URLSearchParams(window.location.search);
-    const mode = urlParams.get("mode");
-    const oobCode = urlParams.get("oobCode");
-
-    console.log("Mode:", mode);  // Check the value of mode
-    console.log("oobCode:", oobCode); // Check the value of oobCode
-
-    if (mode === "verifyEmail" && oobCode) {
-        console.log('Hello World');
-        console.log(document.getElementById('email'));
-        document.getElementById('container').style.display = 'flex';
-        document.getElementById('email').style.display = 'none';
-        document.getElementById('password').style.display = 'none';
-        document.getElementById('sign-in').style.display = 'none';
-        document.getElementById('create-account').style.display = 'none';
-    } else if (mode !== "verifyEmail") {
-        document.getElementById('container').style.display = 'none';
-        console.log("Not verify email page")
     }
 })
 
@@ -673,6 +683,7 @@ async function signUp() {
             const actionCodeSettings = {
                 // The URL to your custom verification page
                 url: 'https://vitalii-borys.github.io/Learn_English_Web/',
+                //url: 'http://127.0.0.1:5500/index.html',
                 // Tells Firebase to not handle the code automatically
                 handleCodeInApp: true,
               };
