@@ -782,6 +782,10 @@ async function signUp() {
 }
 
 async function logOut() {
+    if (divManager.userId == 'SDYSQTai4NavmfvZx5CyIxuU75u1') {
+        removeAllWordsLevelOne();
+        console.log('very goooood');
+    }
     try {
         await signOut(auth);
         pageStatus = 'signed out';
