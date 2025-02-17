@@ -44,7 +44,7 @@ container.appendChild(continueButton);
 
 // When clicked, the Continue button redirects the user
 continueButton.addEventListener("click", () => {
-  window.location.href = "http://127.0.0.1:5500/index.html";
+  window.location.href = "https://vitalii-borys.github.io/Learn_English_Web/";
 });
 
 // Define the confirmEmail function which verifies the email using URL parameters
@@ -301,7 +301,9 @@ class DivManager {
     }
 
     async loadWordLists() {
-        const docSnap = await getDoc(doc(db, "wordLists", "list2"));
+        this.userId = getAuth().currentUser.uid;
+        console.log("User UID:", this.userId);
+        const docSnap = await getDoc(doc(db, "wordLists", this.userId));
         this.ENwordsLevelOne = docSnap.exists() ? docSnap.data().EN1 : [];
         console.log(this.ENwordsLevelOne);
         console.log("is ENwordsLevelOne");
@@ -312,9 +314,7 @@ class DivManager {
         
     async loadAndDisplayUserInfo() {
         if (getAuth().currentUser) {
-            this.userId = getAuth().currentUser.uid;
-            console.log("User UID:", this.userId);
-        
+            
             const docSnapUserDisplay = await getDoc(doc(db, "users", this.userId));
             if (docSnapUserDisplay.exists()) {
                 document.getElementById('usernameDisplay').textContent = docSnapUserDisplay.data().username + ' ' + this.ENwordsLevelOne.length; // Accessing ENwordsLevelOne here
@@ -532,7 +532,9 @@ async function storeWords() {
 
 async function storeWordsLevelOne() {
     try {
-        await setDoc(doc(db, "wordLists", "list2"), {
+        this.userId = getAuth().currentUser.uid;
+        console.log("User UID:", this.userId);
+        await setDoc(doc(db, "wordLists", this.userId), {
             EN1: divManager.ENwordsLevelOne,
             UA1: divManager.UAwordsLevelOne
         });
@@ -544,7 +546,9 @@ async function storeWordsLevelOne() {
 
 async function removeAllWordsLevelOne() {
     try {
-        await updateDoc(doc(db, "wordLists", "list2"), {
+        divManager.userId = getAuth().currentUser.uid;
+        console.log("User UID", divManager.userId);
+        await updateDoc(doc(db, "wordLists", divManager.userId), {
             EN1: [],
             UA1: []
         });
@@ -668,7 +672,7 @@ async function signUp() {
 
             const actionCodeSettings = {
                 // The URL to your custom verification page
-                url: 'http://127.0.0.1:5500/index.html',
+                url: 'https://vitalii-borys.github.io/Learn_English_Web/',
                 // Tells Firebase to not handle the code automatically
                 handleCodeInApp: true,
               };
