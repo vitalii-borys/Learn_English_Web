@@ -52,22 +52,6 @@ const urlParams = new URLSearchParams(window.location.search);
 const mode = urlParams.get("mode");
 const oobCode = urlParams.get("oobCode");
 
-console.log("Mode:", mode);  // Check the value of mode
-console.log("oobCode:", oobCode); // Check the value of oobCode
-
-if (mode === "verifyEmail" && oobCode) {
-    console.log('Hello World');
-    console.log(document.getElementById('email'));
-    document.getElementById('container').style.display = 'flex';
-    document.getElementById('email').style.display = 'none';
-    document.getElementById('password').style.display = 'none';
-    document.getElementById('sign-in').style.display = 'none';
-    document.getElementById('create-account').style.display = 'none';
-} else if (mode !== "verifyEmail") {
-    document.getElementById('container').style.display = 'none';
-    console.log("Not verify email page")
-}
-
 // Define the confirmEmail function which verifies the email using URL parameters
 function confirmEmail() {
   // Parse URL parameters for mode and oobCode
@@ -115,15 +99,15 @@ function createInput(inputType, inputPlaceholder, inputId) {
     document.body.appendChild(input);
 }
 
-createInput('text', 'Username', 'username');
-createInput('email', 'Email', 'email');
-createInput('password', 'Password', 'password');
-createInput('password', 'Confirm password', 'confirmPassword');
-createAuthButton('Sign in', 'sign-up', 'sign-in');
-createAuthButton('Sign up', 'sign-in', 'sign-up');
-createAuthButton('Log out', 'log-out', 'log-out');
-createAuthButton('Create account', 'create-account', 'create-account');
-createAuthButton('Back to sign in', 'sign-in', 'back-to-sign-in');
+createInput('text', 'Ім\'я у грі', 'username');
+createInput('email', 'Електронна пошта', 'email');
+createInput('password', 'Пароль', 'password');
+createInput('password', 'Підтвердити пароль', 'confirmPassword');
+createAuthButton('Зайти', 'sign-up', 'sign-in');
+createAuthButton('Приєднатися', 'sign-in', 'sign-up');
+createAuthButton('Вихід', 'log-out', 'log-out');
+createAuthButton('Створити акаунт', 'create-account', 'create-account');
+createAuthButton('Назад до входу', 'sign-in', 'back-to-sign-in');
 
 const signUpButton = document.getElementById('sign-up');
 const signInButton = document.getElementById('sign-in');
@@ -147,6 +131,23 @@ confirmPassword.style.display = 'none';
 statusMessage.textContent = pageStatus;
 statusMessage.id = 'statusMessage';
 document.body.appendChild(statusMessage);
+
+console.log("Mode:", mode);  // Check the value of mode
+console.log("oobCode:", oobCode); // Check the value of oobCode
+
+if (mode === "verifyEmail" && oobCode) {
+    console.log('Hello World');
+    console.log(document.getElementById('email'));
+    document.getElementById('container').style.display = 'flex';
+    document.getElementById('email').style.display = 'none';
+    document.getElementById('password').style.display = 'none';
+    document.getElementById('sign-in').style.display = 'none';
+    document.getElementById('create-account').style.display = 'none';
+} else if (mode !== "verifyEmail") {
+    document.getElementById('container').style.display = 'none';
+    console.log("Not verify email page")
+}
+
 
 signInButton.addEventListener('click', async () => {
     console.log('Sign in button clicked');
@@ -200,8 +201,54 @@ createAccountButton.addEventListener('click', () => {
     createAccountButton.style.display = 'none';
 });
 
+// Assuming the necessary imports and initializations are already done
+
+// Create the "Try Without Registration" button
+const tryWithoutRegistrationButton = document.createElement('button');
+tryWithoutRegistrationButton.id = 'try-without-registration';
+tryWithoutRegistrationButton.textContent = 'Спробувати без реєстрації';
+tryWithoutRegistrationButton.style.fontSize = '1.1rem';
+tryWithoutRegistrationButton.style.display = 'block'; // Initially visible
+tryWithoutRegistrationButton.style.borderRadius = '4px'; // Initially visible
+document.body.appendChild(tryWithoutRegistrationButton);
+
+// Add event listener for the button
+tryWithoutRegistrationButton.addEventListener('click', () => {
+    const auth = getAuth();
+    const email = 'photoshopprofy@gmail.com';
+    const password = '12321232';
+
+    signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+            console.log('Signed in as guest');
+            const user = userCredential.user;
+            pageStatus = 'guest';
+            statusMessage.textContent = 'You are exploring as a guest.';
+            logOutButton.style.display = 'block';
+            document.getElementById('aspect-container').style.display = 'flex';
+            document.getElementById('email').style.display = 'none';
+            document.getElementById('password').style.display = 'none';
+            document.getElementById('sign-in').style.display = 'none';
+            document.getElementById('sign-up').style.display = 'none';
+            document.getElementById('create-account').style.display = 'none';
+            document.getElementById('username').style.display = 'none';
+            document.getElementById('confirmPassword').style.display = 'none';
+            document.getElementById('back-to-sign-in').style.display = 'none';
+            statusMessage.style.opacity = '1';
+            setTimeout(() => {
+                statusMessage.style.opacity = '0';
+            }, 2000);
+        })
+        .catch((error) => {
+            console.error('Error signing in as guest:', error);
+        });
+});
+
+
 onAuthStateChanged(auth, (user) => {
     if (user && user.emailVerified) {
+        tryWithoutRegistrationButton.style.display = 'none'; // Hide the button when signed in
+        // Existing code for signed-in users...
         const firstSignIn = document.createElement('span');
         firstSignIn.id = 'first-sign-in';
         firstSignIn.textContent = 'Перший запуск триває довше ніж наступні';
@@ -258,6 +305,8 @@ onAuthStateChanged(auth, (user) => {
             statusMessage.style.opacity = '0';
         }, 2000);
     } else {
+        tryWithoutRegistrationButton.style.display = 'block'; // Show the button when signed out
+        // Existing code for signed-out users...
         console.log('User is signed out');
         pageStatus = 'signed out';
         statusMessage.textContent = 'User is signed out.';
@@ -471,10 +520,10 @@ myInput.value = '';
 myInput.style.display = 'none';
 myEnterButton.id = 'enterButton';
 myEnterButton.textContent = 'Enter'
-removeLevelOne.textContent = 'Reset progress';
+removeLevelOne.textContent = 'Скинути прогрес';
 removeLevelOne.id = 'removeLevelOne';
 toggleButton.id = 'toggleButton';
-toggleButton.textContent = 'Light/Dark Mode';
+toggleButton.textContent = 'Темна/Світла тема';
 uaDiv.id = 'UAtext';
 uaDiv.textContent = 'Вітаю у грі. Натисніть "Enter" щоб почати.';
 document.body.appendChild(aspectDiv);

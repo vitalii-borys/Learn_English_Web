@@ -177,7 +177,7 @@ span {
     bottom: 10px;
     left: 36%;
     border-radius: 12px;
-    font-size: 1.05rem;
+    font-size: 1rem;
     border: 1px solid orange;
 }
 
@@ -187,7 +187,7 @@ span {
     bottom: 10px;
     border-radius: 12px;
     border: none;
-    font-size: 1.1rem;
+    font-size: 1rem;
     border: 1px solid red;
 }
 
@@ -197,7 +197,7 @@ span {
     bottom: 10px;
     border-radius: 12px;
     border: none;
-    font-size: 1.25rem;
+    font-size: 1.15rem;
     border: 1px solid red;
 }
 
