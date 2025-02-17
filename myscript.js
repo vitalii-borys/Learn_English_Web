@@ -520,10 +520,10 @@ myInput.value = '';
 myInput.style.display = 'none';
 myEnterButton.id = 'enterButton';
 myEnterButton.textContent = 'Enter'
-removeLevelOne.textContent = 'Скинути прогрес';
+removeLevelOne.innerHTML = 'Скинути <br>  прогрес';
 removeLevelOne.id = 'removeLevelOne';
 toggleButton.id = 'toggleButton';
-toggleButton.textContent = 'Темна/Світла тема';
+toggleButton.innerHTML = 'Темна/Світла <br> тема';
 uaDiv.id = 'UAtext';
 uaDiv.textContent = 'Вітаю у грі. Натисніть "Enter" щоб почати.';
 document.body.appendChild(aspectDiv);
