@@ -520,6 +520,7 @@ const connectedDiv = document.createElement('div');
 const leftDiv = document.createElement('div');
 const myInput = document.createElement('input');
 const rightDiv = document.createElement('div');
+const hintButton = document.createElement('button');
 aspectDiv.id = 'aspect-container';
 userNameDisplay.id = 'usernameDisplay';
 aspectDiv.style.display = 'none';
@@ -527,6 +528,7 @@ connectedDiv.id = 'connectedText';
 leftDiv.id = 'leftText';
 rightDiv.id = 'rightText';
 myInput.id = 'myInput';
+hintButton.id = 'hintButton';
 myInput.type = 'text';
 myInput.setAttribute('autocapitalize', 'none');
 myInput.maxLength = '1';
@@ -535,6 +537,7 @@ myInput.value = '';
 myInput.style.display = 'none';
 myEnterButton.id = 'enterButton';
 myEnterButton.textContent = 'Enter'
+hintButton.textContent = 'Підказка';
 removeLevelOne.innerHTML = 'Скинути <br>  прогрес';
 removeLevelOne.id = 'removeLevelOne';
 toggleButton.id = 'toggleButton';
@@ -542,6 +545,7 @@ toggleButton.innerHTML = 'Темна/Світла <br> тема';
 uaDiv.id = 'UAtext';
 uaDiv.textContent = 'Вітаю у грі. Натисніть "Enter" щоб почати.';
 document.body.appendChild(aspectDiv);
+aspectDiv.appendChild(hintButton);
 aspectDiv.appendChild(uaDiv);
 aspectDiv.appendChild(myEnterButton);
 aspectDiv.appendChild(connectedDiv);
@@ -552,17 +556,13 @@ connectedDiv.appendChild(leftDiv);
 connectedDiv.appendChild(myInput);
 connectedDiv.appendChild(rightDiv);
 
-const hintButton = document.createElement('button');
-hintButton.id = 'hintButton';
-hintButton.textContent = 'Підказка';
-aspectDiv.appendChild(hintButton);
 function createConsonanlVowels(text) {
   let cwText = "";
   for (let i = 0; i < text.length; i++) {
     const char = text[i];
-    if (/[aeiouAEIOU]/.test(char)) {
+    if (/[aeioyuAEIOYU]/.test(char)) {
       cwText += "г";
-    } else if (/[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]/.test(char)) {
+    } else if (/[bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ]/.test(char)) {
       cwText += "п";
     } else {
       cwText += char;
