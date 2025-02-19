@@ -339,7 +339,20 @@ class DivManager {
         this.currentWordIndex = 0;
         this.ENwordsLevelOne = [];
         this.UAwordsLevelOne = [];
+        this.sortedENwords = [];
+        this.sortedUAwords = [];
         this.wrongInputCount = 0;
+    }
+
+    getSortedData() {
+        const ENwords = this.ENwords;
+        const UAwords = this.UAwords;
+        const combined = ENwords.map((en, index) => ({ en, ua: UAwords[index] }));
+        combined.sort((a, b) => a.en.localeCompare(b.en));
+        this.sortedENwords = combined.map(item => item.en);
+        this.sortedUAwords = combined.map(item => item.ua);
+        console.log(this.sortedENwords);
+        console.log(this.sortedUAwords);
     }
     
     shuffleArray(arrayOfWords) {
@@ -389,6 +402,7 @@ class DivManager {
     async initialize() {
         await this.loadWordLists();
         await this.loadAndDisplayUserInfo();
+        this.getSortedData();
     }
     
     splitWordDiv() {
@@ -593,13 +607,15 @@ myEnterButton.addEventListener('click', () => {
         divManager.wrongInputCount += 1;
         if (divManager.wrongInputCount == 3) {
             document.getElementById('hint').style.display = 'block';
-            let index = divManager.ENwords.indexOf(divManager.wordToGuess);
-            const enIndexes = getWordWindow(divManager.ENwords, index);
-            const uaIndexes = getWordWindow(divManager.UAwords, index);
+            let index = divManager.sortedENwords.indexOf(divManager.wordToGuess);
+            console.log(index);
+            console.log('is index');
+            const enIndexes = getWordWindow(divManager.sortedENwords, index);
+            const uaIndexes = getWordWindow(divManager.sortedUAwords, index);
             let hintHTML = '';
             for (let i = 0; i < 5; i++) {
                 if (enIndexes[i] !== undefined && uaIndexes[i] !== undefined) {
-                    hintHTML += `${divManager.ENwords[enIndexes[i]]} | ${divManager.UAwords[uaIndexes[i]]}<br>`;
+                    hintHTML += `${divManager.sortedENwords[enIndexes[i]]} | ${divManager.sortedUAwords[uaIndexes[i]]}<br>`;
                 }
             }
             hint.innerHTML = hintHTML;
@@ -617,7 +633,7 @@ myEnterButton.addEventListener('click', () => {
     myInput.focus();
 });
 
-async function storeWords() {
+/* async function storeWords() {
     try {
         await setDoc(doc(db, "wordLists", "list1"), { 
             ENList: divManager.ENwords, 
@@ -627,7 +643,41 @@ async function storeWords() {
     } catch (error) {
         console.log("Error writing document; ", error);
     }
-}
+} */
+
+/* async function storeWords() {
+    try {
+        // Read the existing data from Firestore
+        const docRef = doc(db, "wordLists", "list1");
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+            // Extract the ENwords and UAwords arrays
+            const ENwords = docSnap.data().ENList;
+            const UAwords = docSnap.data().UAList;
+
+            // Sort ENwords alphabetically and keep UAwords aligned
+            const combined = ENwords.map((en, index) => ({ en, ua: UAwords[index] }));
+            combined.sort((a, b) => a.en.localeCompare(b.en));
+
+            // Extract the sorted arrays
+            const sortedENwords = combined.map(item => item.en);
+            const sortedUAwords = combined.map(item => item.ua);
+
+            // Store the sorted lists in a new document
+            await setDoc(doc(db, "wordLists", "listSorted"), {
+                ENList: sortedENwords,
+                UAList: sortedUAwords
+            });
+
+            console.log("Words sorted and stored successfully as 'listSorted'!");
+        } else {
+            console.log("No such document found!");
+        }
+    } catch (error) {
+        console.log("Error reading or writing document: ", error);
+    }
+} */
 
 async function storeWordsLevelOne() {
     try {
