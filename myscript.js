@@ -339,6 +339,7 @@ class DivManager {
         this.currentWordIndex = 0;
         this.ENwordsLevelOne = [];
         this.UAwordsLevelOne = [];
+        this.wrongInputCount = 0;
     }
     
     shuffleArray(arrayOfWords) {
@@ -468,9 +469,9 @@ class DivManager {
     }
 
     showConstructor(moment) {
-        /* console.log(this.divID + ' is divID');
+        console.log(this.divID + ' is divID');
         console.log(this.divs.length + ' is divs length');
-        console.log(this.currentWordIndex + ' is curWorInd'); */
+        console.log(this.currentWordIndex + ' is curWorInd');
         console.log(this.charToGuess + ' is charToGuess');
         console.log(this.wordToGuess + ' is wordToGuess');
         console.log('When? ' + moment);
@@ -539,6 +540,29 @@ connectedDiv.appendChild(rightDiv);
 
 removeLevelOne.addEventListener('click', () => {removeAllWordsLevelOne();})
 toggleButton.addEventListener('click', () => {lightDarkMode();});
+
+function getWordWindow(words, index) {
+    let start = Math.max(0, index - 2);
+    let end = start + 5;
+    
+    if (end > words.length) {
+        end = words.length;
+        start = Math.max(0, end - 5);
+    }
+    
+    return Array.from({ length: end - start }, (_, i) => start + i);
+}
+
+let hint = document.createElement('div');
+hint.id = 'hint';
+hint.innerHTML = 'hint';
+hint.style.display = 'none';
+hint.style.position = 'absolute';
+hint.style.textAlign = 'center';
+hint.style.top = '2rem';
+hint.style.fontSize = '1.5rem'
+document.body.appendChild(hint);
+
 myEnterButton.addEventListener('click', () => {
     if (myInput.value.toLowerCase() == divManager.charToGuess.toLowerCase()) {
         if (divManager.shuffledData.ENwords.length === 0) {
@@ -548,6 +572,8 @@ myEnterButton.addEventListener('click', () => {
             document.getElementById('rightText').textContent = '';
             return;
         } else {
+            document.getElementById('hint').style.display = 'none';
+            divManager.wrongInputCount = 0;
             console.log(myInput.value + ' & ' + divManager.charToGuess + ' are equal chars to guess');
             if (divManager.wordtoguess !== '') {
                 divManager.ENwordsLevelOne.push(divManager.wordtoguess);
@@ -564,6 +590,20 @@ myEnterButton.addEventListener('click', () => {
         }
         divManager.moveAllDivsDown();
     } else {
+        divManager.wrongInputCount += 1;
+        if (divManager.wrongInputCount == 3) {
+            document.getElementById('hint').style.display = 'block';
+            let index = divManager.ENwords.indexOf(divManager.wordToGuess);
+            const enIndexes = getWordWindow(divManager.ENwords, index);
+            const uaIndexes = getWordWindow(divManager.UAwords, index);
+            let hintHTML = '';
+            for (let i = 0; i < 5; i++) {
+                if (enIndexes[i] !== undefined && uaIndexes[i] !== undefined) {
+                    hintHTML += `${divManager.ENwords[enIndexes[i]]} | ${divManager.UAwords[uaIndexes[i]]}<br>`;
+                }
+            }
+            hint.innerHTML = hintHTML;
+        }
         console.log(myInput.value + ' & ' + divManager.charToGuess + ' are not equal chars to guess');
         const connectedText = document.getElementById('connectedText');
         connectedText.classList.add('shake');
