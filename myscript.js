@@ -552,6 +552,43 @@ connectedDiv.appendChild(leftDiv);
 connectedDiv.appendChild(myInput);
 connectedDiv.appendChild(rightDiv);
 
+const hintButton = document.createElement('button');
+hintButton.id = 'hintButton';
+hintButton.textContent = 'Підказка';
+aspectDiv.appendChild(hintButton);
+function createConsonanlVowels(text) {
+  let cwText = "";
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    if (/[aeiouAEIOU]/.test(char)) {
+      cwText += "г";
+    } else if (/[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]/.test(char)) {
+      cwText += "п";
+    } else {
+      cwText += char;
+    }
+  }
+  return cwText;
+}
+
+const consonantsVowelsDiv = document.createElement('div');
+  consonantsVowelsDiv.id = 'consonantVowelsHint';
+  consonantsVowelsDiv.style.position = 'relative';
+  consonantsVowelsDiv.textContent = '';
+  aspectDiv.appendChild(consonantsVowelsDiv);
+const consonantsVowelsDiv2 = document.createElement('div');
+  consonantsVowelsDiv2.style.display = 'none';
+  consonantsVowelsDiv2.id = 'consonantVowelsHint2';
+  consonantsVowelsDiv2.textContent = 'Голосні/Приголосні';
+  aspectDiv.appendChild(consonantsVowelsDiv2);
+
+hintButton.addEventListener('click', () => {
+  console.log(divManager.wordToGuess);
+  consonantsVowelsDiv.innerHTML = createConsonanlVowels(divManager.wordToGuess);
+  consonantsVowelsDiv.style.display = 'block';
+  consonantsVowelsDiv2.style.display = 'block';
+});
+
 removeLevelOne.addEventListener('click', () => {removeAllWordsLevelOne();})
 toggleButton.addEventListener('click', () => {lightDarkMode();});
 
@@ -587,6 +624,8 @@ myEnterButton.addEventListener('click', () => {
             return;
         } else {
             document.getElementById('hint').style.display = 'none';
+            consonantsVowelsDiv.style.display = 'none';
+            consonantsVowelsDiv2.style.display = 'none';
             divManager.wrongInputCount = 0;
             console.log(myInput.value + ' & ' + divManager.charToGuess + ' are equal chars to guess');
             if (divManager.wordtoguess !== '') {
