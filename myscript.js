@@ -15,7 +15,7 @@ const firebaseConfig = {
   measurementId: "G-0R5Q4LWVHL"
 };
 
-let myApp = initializeApp(firebaseConfig);
+const myApp = initializeApp(firebaseConfig);
 const auth = getAuth(myApp);
 
 // Create a container for the UI
@@ -244,20 +244,6 @@ tryWithoutRegistrationButton.addEventListener('click', () => {
         });
 });
 
-if (typeof onAuthStateChanged === "function") {
-    onAuthStateChanged(auth, (user) => {
-        if (!user) {
-            const myMessage = document.createElement('div');
-            myMessage.textContent = 'Page works without user registration or authentication';
-            document.body.appendChild(myMessage);
-        }
-    });
-} else {
-    // Fallback for iOS 12 devices
-    const myMessage = document.createElement('div');
-    myMessage.textContent = 'Authentication is unavailable on this device.';
-    document.body.appendChild(myMessage);
-}
 
 onAuthStateChanged(auth, (user) => {
     if (user && user.emailVerified) {

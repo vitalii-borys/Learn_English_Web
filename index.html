@@ -10,6 +10,10 @@
 </head>
 <body class="lightmode">
     <script type="module" src="./myscript.js"></script>
-    <!-- <script type="module" src="./my_script.js"></script> -->
+    <script nomodule>
+        var fallbackScript = document.createElement('script');
+        fallbackScript.src = 'fallback.js';
+        document.body.appendChild('./my_script.js');
+    </script>
 </body>
 </html>
