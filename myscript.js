@@ -571,21 +571,23 @@ function createConsonanlVowels(text) {
   return cwText;
 }
 
-const consonantsVowelsDiv = document.createElement('div');
-  consonantsVowelsDiv.id = 'consonantVowelsHint';
-  consonantsVowelsDiv.style.position = 'relative';
-  consonantsVowelsDiv.textContent = '';
-  aspectDiv.appendChild(consonantsVowelsDiv);
+function changeInputColor() {
+    const char = divManager.charToGuess;
+    if (/[aeiouyAEIOUY]/.test(char)) {
+        myInput.style.backgroundColor = 'orange'; // Vowel
+    } else if (/[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]/.test(char)) {
+        myInput.style.backgroundColor = 'blue'; // Consonant
+    }
+}
+
 const consonantsVowelsDiv2 = document.createElement('div');
   consonantsVowelsDiv2.style.display = 'none';
   consonantsVowelsDiv2.id = 'consonantVowelsHint2';
-  consonantsVowelsDiv2.textContent = 'Голосні/Приголосні';
+  consonantsVowelsDiv2.innerHTML = 'Голосна <span style="color: orange;">■</span><br>Приголосна <span style="color: blue;">■</span>';
   aspectDiv.appendChild(consonantsVowelsDiv2);
 
 hintButton.addEventListener('click', () => {
-  console.log(divManager.wordToGuess);
-  consonantsVowelsDiv.innerHTML = createConsonanlVowels(divManager.wordToGuess);
-  consonantsVowelsDiv.style.display = 'block';
+  changeInputColor();
   consonantsVowelsDiv2.style.display = 'block';
 });
 
@@ -615,6 +617,7 @@ hint.style.fontSize = '1.5rem'
 document.body.appendChild(hint);
 
 myEnterButton.addEventListener('click', () => {
+    myInput.style.backgroundColor = 'white';
     if (myInput.value.toLowerCase() == divManager.charToGuess.toLowerCase()) {
         if (divManager.shuffledData.ENwords.length === 0) {
             uaDiv.textContent = "Вітаю з перемогою!";
@@ -624,7 +627,6 @@ myEnterButton.addEventListener('click', () => {
             return;
         } else {
             document.getElementById('hint').style.display = 'none';
-            consonantsVowelsDiv.style.display = 'none';
             consonantsVowelsDiv2.style.display = 'none';
             divManager.wrongInputCount = 0;
             console.log(myInput.value + ' & ' + divManager.charToGuess + ' are equal chars to guess');
