@@ -12,8 +12,8 @@
     <script type="module" src="./myscript.js"></script>
     <script nomodule>
         var fallbackScript = document.createElement('script');
-        fallbackScript.src = 'fallback.js';
-        document.body.appendChild('./my_script.js');
+        fallbackScript.src = './my_script.js';
+        document.body.appendChild(fallbackScript);
     </script>
 </body>
 </html>
