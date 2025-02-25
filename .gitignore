@@ -6,6 +6,3 @@ node_modules/
 
 # Optional: Package lock
 package-lock.json
-
-# Testing js
-my_script.js
