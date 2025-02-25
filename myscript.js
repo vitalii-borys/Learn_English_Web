@@ -15,8 +15,14 @@ const firebaseConfig = {
   measurementId: "G-0R5Q4LWVHL"
 };
 
-const myApp = initializeApp(firebaseConfig);
+let myApp = initializeApp(firebaseConfig);
 const auth = getAuth(myApp);
+
+if (!auth) {
+    const myMessage = document.createElement('div');
+    myMessage.textContent = '555666';
+    document.body.appendChild(myMessage);
+}
 
 // Create a container for the UI
 const container = document.createElement("div");
@@ -443,10 +449,10 @@ class DivManager {
         this.divID = this.divID + 1;
         div.textContent = `${myContent}`;
         div.style.position = 'absolute';
-        div.style.top = '50%';
+        div.style.bottom = '56%';
         div.style.fontSize = '3rem';
         div.style.opacity = '0';
-        div.style.transition = 'opacity 0.2s, top 5s cubic-bezier(0,.82,.43,.92), font-size 5s cubic-bezier(0,.82,.43,.92)';
+        div.style.transition = 'opacity 0.2s, bottom 5s cubic-bezier(0,.82,.43,.92), font-size 5s cubic-bezier(0,.82,.43,.92)';
         aspectD.appendChild(div);
         this.divs.push(div);
         this.wordtoguess = this.shuffledData.ENwords.shift();
@@ -457,7 +463,7 @@ class DivManager {
         }, 100);
 
         setTimeout(() => {
-            div.style.transition = 'opacity 5s cubic-bezier(0,.82,.43,.92), top 5s linear, font-size 5s linear';
+            div.style.transition = 'opacity 5s cubic-bezier(0,.82,.43,.92), bottom 5s linear, font-size 5s linear';
             div.style.opacity = '0';
         }, 5100);
 
@@ -474,10 +480,10 @@ class DivManager {
             this.divs.forEach((div) => {
                 //div.style.border = '1px solid red';
                 const currentFontSize = parseFloat(div.style.fontSize);
-                const currentTop = parseFloat(div.style.top);
+                const currentTop = parseFloat(div.style.bottom);
                 //console.log(currentTop);
                 div.style.fontSize = `${currentFontSize - 0.8}rem`;
-                div.style.top = `${currentTop + 7}%`;
+                div.style.bottom = `${currentTop - 8}%`;
             });
         }, 150);
     }
@@ -508,8 +514,7 @@ document.addEventListener('keydown', (myEvent) => {
     }
 });
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const db = getFirestore(myApp);
 const aspectDiv = document.createElement('div');
 const userNameDisplay = document.createElement('div');
 const toggleButton = document.createElement('button');
@@ -535,6 +540,7 @@ myInput.maxLength = '1';
 myInput.autocomplete = 'off';
 myInput.value = '';
 myInput.style.display = 'none';
+hintButton.style.display = 'none';
 myEnterButton.id = 'enterButton';
 myEnterButton.textContent = 'Enter'
 hintButton.textContent = 'Підказка';
@@ -556,34 +562,19 @@ connectedDiv.appendChild(leftDiv);
 connectedDiv.appendChild(myInput);
 connectedDiv.appendChild(rightDiv);
 
-function createConsonanlVowels(text) {
-  let cwText = "";
-  for (let i = 0; i < text.length; i++) {
-    const char = text[i];
-    if (/[aeioyuAEIOYU]/.test(char)) {
-      cwText += "г";
-    } else if (/[bcdfghjklmnpqrstvwxzBCDFGHJKLMNPQRSTVWXZ]/.test(char)) {
-      cwText += "п";
-    } else {
-      cwText += char;
-    }
-  }
-  return cwText;
-}
-
 function changeInputColor() {
     const char = divManager.charToGuess;
     if (/[aeiouyAEIOUY]/.test(char)) {
         myInput.style.backgroundColor = 'orange'; // Vowel
     } else if (/[bcdfghjklmnpqrstvwxyzBCDFGHJKLMNPQRSTVWXYZ]/.test(char)) {
-        myInput.style.backgroundColor = 'blue'; // Consonant
+        myInput.style.backgroundColor = 'rgb(174, 174, 207)'; // Consonant
     }
 }
 
 const consonantsVowelsDiv2 = document.createElement('div');
   consonantsVowelsDiv2.style.display = 'none';
   consonantsVowelsDiv2.id = 'consonantVowelsHint2';
-  consonantsVowelsDiv2.innerHTML = 'Голосна <span style="color: orange;">■</span><br>Приголосна <span style="color: blue;">■</span>';
+  consonantsVowelsDiv2.innerHTML = 'Голосна <span style="color: orange;">■</span><br>Приголосна <span style="color: rgb(174, 174, 207);">■</span>';
   aspectDiv.appendChild(consonantsVowelsDiv2);
 
 hintButton.addEventListener('click', () => {
@@ -618,6 +609,7 @@ document.body.appendChild(hint);
 
 myEnterButton.addEventListener('click', () => {
     myInput.style.backgroundColor = 'white';
+    hintButton.style.display = 'block';
     if (myInput.value.toLowerCase() == divManager.charToGuess.toLowerCase()) {
         if (divManager.shuffledData.ENwords.length === 0) {
             uaDiv.textContent = "Вітаю з перемогою!";
@@ -673,52 +665,6 @@ myEnterButton.addEventListener('click', () => {
     myInput.style.display = 'flex';
     myInput.focus();
 });
-
-/* async function storeWords() {
-    try {
-        await setDoc(doc(db, "wordLists", "list1"), { 
-            ENList: divManager.ENwords, 
-            UAList: divManager.UAwords 
-          });
-        console.log("Words stored successfully!");
-    } catch (error) {
-        console.log("Error writing document; ", error);
-    }
-} */
-
-/* async function storeWords() {
-    try {
-        // Read the existing data from Firestore
-        const docRef = doc(db, "wordLists", "list1");
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-            // Extract the ENwords and UAwords arrays
-            const ENwords = docSnap.data().ENList;
-            const UAwords = docSnap.data().UAList;
-
-            // Sort ENwords alphabetically and keep UAwords aligned
-            const combined = ENwords.map((en, index) => ({ en, ua: UAwords[index] }));
-            combined.sort((a, b) => a.en.localeCompare(b.en));
-
-            // Extract the sorted arrays
-            const sortedENwords = combined.map(item => item.en);
-            const sortedUAwords = combined.map(item => item.ua);
-
-            // Store the sorted lists in a new document
-            await setDoc(doc(db, "wordLists", "listSorted"), {
-                ENList: sortedENwords,
-                UAList: sortedUAwords
-            });
-
-            console.log("Words sorted and stored successfully as 'listSorted'!");
-        } else {
-            console.log("No such document found!");
-        }
-    } catch (error) {
-        console.log("Error reading or writing document: ", error);
-    }
-} */
 
 async function storeWordsLevelOne() {
     try {

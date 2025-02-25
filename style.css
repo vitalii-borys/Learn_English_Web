@@ -48,11 +48,12 @@ div {
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative;
-    bottom: 4rem;
+    position: absolute;
+    bottom: 80%;
     font-size: 2rem;
     word-wrap: break-word;    
     text-align: center;
+    /* border: 2px solid rgb(174, 174, 207); */
 }
 
 #usernameDisplay {
@@ -221,6 +222,7 @@ span {
 }
 
 #connectedText {
+    bottom: 60%;
     position: absolute;
     display: flex;
     justify-content: center;
