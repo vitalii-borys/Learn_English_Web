@@ -3,6 +3,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.9.0/firebas
 import { getFirestore, getDoc, setDoc, updateDoc, doc} from "https://www.gstatic.com/firebasejs/10.9.0/firebase-firestore.js";
 import { getAuth, applyActionCode, signOut, createUserWithEmailAndPassword, sendEmailVerification, updateProfile, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.9.0/firebase-auth.js";
 
+console.log('./myscript.js is loaded');
+
 // https://firebase.google.com/docs/web/setup#available-libraries
 const firebaseConfig = {
   apiKey: "AIzaSyBr7wee4BXoi6rpKiQfi-beISDBdgmGMSw",
@@ -244,14 +246,13 @@ tryWithoutRegistrationButton.addEventListener('click', () => {
         });
 });
 
-
 onAuthStateChanged(auth, (user) => {
     if (user && user.emailVerified) {
         tryWithoutRegistrationButton.style.display = 'none'; // Hide the button when signed in
         // Existing code for signed-in users...
         const firstSignIn = document.createElement('span');
         firstSignIn.id = 'first-sign-in';
-        firstSignIn.textContent = 'Перший запуск триває довше ніж наступні (спробуйте перезавантажити сторінку якщо нічого не відбувається)';
+        firstSignIn.textContent = 'Перший запуск триває довше ніж наступні (спробуйте перезавантажити сторінку через 10 секунд, якщо нічого не відбувається)';
         firstSignIn.style.fontSize = '1.8rem';
         firstSignIn.style.alignContent = 'center';
         document.body.appendChild(firstSignIn);
@@ -296,7 +297,7 @@ onAuthStateChanged(auth, (user) => {
             } else {
                 console.log("divManager not initialized yet.");
             }
-        }, 1100); // Add a delay to allow asynchronous operation to complete
+        }, 1800); // Add a delay to allow asynchronous operation to complete
         
         window.divManager = divManager; // Make it globally available
         
@@ -325,6 +326,15 @@ onAuthStateChanged(auth, (user) => {
         }, 2000);
     }
 })
+
+// Helper function to create a timeout promise
+function createTimeout(ms, methodName) {
+    return new Promise((_, reject) => {
+        setTimeout(() => {
+            reject(new Error(`${methodName} timed out after ${ms}ms`));
+        }, ms);
+    });
+}
 
 class DivManager {
     constructor(wordData) {
@@ -373,38 +383,93 @@ class DivManager {
         };
     }
 
-    async loadWordLists() {
-        this.userId = getAuth().currentUser.uid;
-        console.log("User UID:", this.userId);
-        const docSnap = await getDoc(doc(db, "wordLists", this.userId));
-        this.ENwordsLevelOne = docSnap.exists() ? docSnap.data().EN1 : [];
-        console.log(this.ENwordsLevelOne);
-        console.log("is ENwordsLevelOne");
-        this.UAwordsLevelOne = docSnap.exists() ? docSnap.data().UA1 : [];
-        console.log(this.UAwordsLevelOne);
-        console.log(' is UAwordsLevelOne');
-    }
+async loadWordLists() {
+    try {
+        const timeoutDuration = 5000; // 5 seconds timeout
         
-    async loadAndDisplayUserInfo() {
-        if (getAuth().currentUser) {
-            
-            const docSnapUserDisplay = await getDoc(doc(db, "users", this.userId));
-            if (docSnapUserDisplay.exists()) {
-                document.getElementById('usernameDisplay').textContent = docSnapUserDisplay.data().username + ' ' + this.ENwordsLevelOne.length; // Accessing ENwordsLevelOne here
-            } else {
-                console.log('No such document!');
+        const loadOperation = async () => {
+            this.userId = getAuth().currentUser?.uid;
+            if (!this.userId) {
+                console.error("No user is signed in or user ID is not available yet");
+                return;
             }
-        } else {
-            console.log("No user is signed in.");
+            
+            console.log("User UID:", this.userId);
+            const docSnap = await getDoc(doc(db, "wordLists", this.userId));
+            this.ENwordsLevelOne = docSnap.exists() ? docSnap.data().EN1 : [];
+            console.log(this.ENwordsLevelOne);
+            console.log("is ENwordsLevelOne");
+            this.UAwordsLevelOne = docSnap.exists() ? docSnap.data().UA1 : [];
+            console.log(this.UAwordsLevelOne);
+            console.log(' is UAwordsLevelOne');
+        };
+        
+        await Promise.race([
+            loadOperation(),
+            createTimeout(timeoutDuration, 'loadWordLists')
+        ]);
+    } catch (error) {
+        console.error("Error loading word lists:", error);
+        throw error; // Re-throw to allow initialize() to catch it
+    }
+}
+    
+async loadAndDisplayUserInfo() {
+    try {
+        const timeoutDuration = 3000; // 3 seconds timeout
+        
+        const displayOperation = async () => {
+            if (getAuth().currentUser) {
+                const docSnapUserDisplay = await getDoc(doc(db, "users", this.userId));
+                if (docSnapUserDisplay.exists()) {
+                    document.getElementById('usernameDisplay').textContent = docSnapUserDisplay.data().username + ' ' + this.ENwordsLevelOne.length;
+                } else {
+                    console.log('No such document!');
+                }
+            } else {
+                console.log("No user is signed in.");
+            }
+        };
+        
+        await Promise.race([
+            displayOperation(),
+            createTimeout(timeoutDuration, 'loadAndDisplayUserInfo')
+        ]);
+    } catch (error) {
+        console.error("Error loading user info:", error);
+        throw error; // Re-throw to allow initialize() to catch it
+    }
+}
+
+async initialize() {
+    try {
+        const timeoutDuration = 10000; // 10 seconds timeout for the entire initialization
+        
+        const initOperation = async () => {
+            await this.loadWordLists();
+            await this.loadAndDisplayUserInfo();
+            this.getSortedData();
+        };
+        
+        await Promise.race([
+            initOperation(),
+            createTimeout(timeoutDuration, 'initialize')
+        ]);
+        
+        console.log("Initialization completed successfully");
+    } catch (error) {
+        console.error("Initialization failed:", error);
+        // Show an error message to the user
+        const errorElement = document.getElementById('errorMessage') || document.createElement('div');
+        if (!errorElement.id) {
+            errorElement.id = 'errorMessage';
+            errorElement.style.color = 'red';
+            errorElement.style.padding = '10px';
+            document.body.prepend(errorElement);
         }
+        errorElement.textContent = `Failed to initialize: ${error.message}. Please refresh the page.`;
     }
-    
-    async initialize() {
-        await this.loadWordLists();
-        await this.loadAndDisplayUserInfo();
-        this.getSortedData();
-    }
-    
+}   
     splitWordDiv() {
         this.wordToGuess = this.shuffledData.ENwords[0];
         this.wordtoguessTranslation = this.shuffledData.UAwords[0];
@@ -595,8 +660,9 @@ let hint = document.createElement('div');
 hint.id = 'hint';
 hint.innerHTML = 'hint';
 hint.style.display = 'none';
-hint.style.position = 'absolute';
+hint.style.position = 'fixed';
 hint.style.textAlign = 'center';
+hint.style.width = '100%';
 hint.style.top = '0';
 hint.style.fontSize = '1.5rem';
 hint.style.padding = '0.5rem 0';
@@ -605,7 +671,9 @@ document.body.appendChild(hint);
 myEnterButton.addEventListener('click', () => {
     myInput.style.backgroundColor = 'white';
     hintButton.style.display = 'block';
+
     if (myInput.value.toLowerCase() == divManager.charToGuess.toLowerCase()) {
+        // Correct answer logic
         if (divManager.shuffledData.ENwords.length === 0) {
             uaDiv.textContent = "Вітаю з перемогою!";
             myInput.value = '';
@@ -613,10 +681,13 @@ myEnterButton.addEventListener('click', () => {
             document.getElementById('rightText').textContent = '';
             return;
         } else {
-            document.getElementById('hint').style.display = 'none';
+            // Hide hint and reset wrong answer counter
+            hint.style.display = 'none';
+            //document.getElementById('hint').style.display = 'none';
             document.getElementById('aspect-container').style.marginTop = '0'; // Reset container position
             consonantsVowelsDiv2.style.display = 'none';
             divManager.wrongInputCount = 0;
+
             console.log(myInput.value + ' & ' + divManager.charToGuess + ' are equal chars to guess');
             if (divManager.wordtoguess !== '') {
                 divManager.ENwordsLevelOne.push(divManager.wordtoguess);
@@ -633,16 +704,15 @@ myEnterButton.addEventListener('click', () => {
         }
         divManager.moveAllDivsDown();
     } else {
+        // Wrong answer logic
         divManager.wrongInputCount += 1;
         console.log('Wrong answer count:', divManager.wrongInputCount);
+        
         if (divManager.wrongInputCount >= 3) {
-            const hint = document.getElementById('hint');
+            //const hint = document.getElementById('hint');
             hint.style.display = 'block';
-            // Calculate the hint height and move the aspect container down
-            setTimeout(() => {
-                const hintHeight = hint.offsetHeight;
-                document.getElementById('aspect-container').style.marginTop = (hintHeight - 20) + 'px';
-            }, 0);
+            
+            // Populate hint content
             let index = divManager.sortedENwords.indexOf(divManager.wordToGuess);
             console.log(index);
             console.log('is index');
@@ -655,7 +725,15 @@ myEnterButton.addEventListener('click', () => {
                 }
             }
             hint.innerHTML = hintHTML;
+            
+            // Calculate the hint height and move the aspect container down
+            setTimeout(() => {
+                const hintHeight = hint.offsetHeight;
+                console.log(hintHeight + ' is hint height;');
+                document.getElementById('aspect-container').style.marginTop = hintHeight + 'px';
+            }, 0);
         }
+
         console.log(myInput.value + ' & ' + divManager.charToGuess + ' are not equal chars to guess');
         const connectedText = document.getElementById('connectedText');
         connectedText.classList.add('shake');
@@ -663,6 +741,7 @@ myEnterButton.addEventListener('click', () => {
             connectedText.classList.remove('shake');
         }, 500);
     }
+    
     divManager.showConstructor('After enter clicked');
     myInput.value = '';
     myInput.style.display = 'flex';

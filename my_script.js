@@ -11746,6 +11746,8 @@ document.addEventListener('keydown', (myEvent) => {
     }
 });
 
+console.log('./my_script.js is loaded');
+
 let divManager = new DivManager(wordData); // Assign instance to the outer variable
 divManager.getSortedData();
 divManager.shuffledData = divManager.shuffleArray(wordData);
