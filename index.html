@@ -9,11 +9,25 @@
     <link rel="icon" href="./reading-book.png" type="image/png">
 </head>
 <body class="lightmode">
-    <script type="module" src="./myscript.js"></script>
+    <script type="module" src="./myscript.js" id="main-script"></script>
     <script nomodule>
         var fallbackScript = document.createElement('script');
-        fallbackScript.src = './my_script.js';
+        fallbackScript.src = 'my_script.js';
         document.body.appendChild(fallbackScript);
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var mainScript = document.getElementById('main-script');
+            if (mainScript) {
+                mainScript.remove(); // Remove the main script
+                console.log('Main script removed');
+            }
+
+            var fallbackScript = document.createElement('script');
+            fallbackScript.src = 'my_script.js';
+            document.body.appendChild(fallbackScript); // Add the fallback script
+            console.log('Fallback script added');
+        });
     </script>
 </body>
 </html>
