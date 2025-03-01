@@ -251,7 +251,7 @@ onAuthStateChanged(auth, (user) => {
         // Existing code for signed-in users...
         const firstSignIn = document.createElement('span');
         firstSignIn.id = 'first-sign-in';
-        firstSignIn.textContent = 'Перший запуск триває довше ніж наступні';
+        firstSignIn.textContent = 'Перший запуск триває довше ніж наступні (спробуйте перезавантажити сторінку якщо нічого не відбувається)';
         firstSignIn.style.fontSize = '1.8rem';
         firstSignIn.style.alignContent = 'center';
         document.body.appendChild(firstSignIn);
@@ -597,8 +597,9 @@ hint.innerHTML = 'hint';
 hint.style.display = 'none';
 hint.style.position = 'absolute';
 hint.style.textAlign = 'center';
-hint.style.top = '2rem';
-hint.style.fontSize = '1.5rem'
+hint.style.top = '0';
+hint.style.fontSize = '1.5rem';
+hint.style.padding = '0.5rem 0';
 document.body.appendChild(hint);
 
 myEnterButton.addEventListener('click', () => {
@@ -613,6 +614,7 @@ myEnterButton.addEventListener('click', () => {
             return;
         } else {
             document.getElementById('hint').style.display = 'none';
+            document.getElementById('aspect-container').style.marginTop = '0'; // Reset container position
             consonantsVowelsDiv2.style.display = 'none';
             divManager.wrongInputCount = 0;
             console.log(myInput.value + ' & ' + divManager.charToGuess + ' are equal chars to guess');
@@ -632,8 +634,15 @@ myEnterButton.addEventListener('click', () => {
         divManager.moveAllDivsDown();
     } else {
         divManager.wrongInputCount += 1;
-        if (divManager.wrongInputCount == 3) {
-            document.getElementById('hint').style.display = 'block';
+        console.log('Wrong answer count:', divManager.wrongInputCount);
+        if (divManager.wrongInputCount >= 3) {
+            const hint = document.getElementById('hint');
+            hint.style.display = 'block';
+            // Calculate the hint height and move the aspect container down
+            setTimeout(() => {
+                const hintHeight = hint.offsetHeight;
+                document.getElementById('aspect-container').style.marginTop = (hintHeight + 10) + 'px';
+            }, 0);
             let index = divManager.sortedENwords.indexOf(divManager.wordToGuess);
             console.log(index);
             console.log('is index');

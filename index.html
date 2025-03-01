@@ -9,25 +9,32 @@
     <link rel="icon" href="./reading-book.png" type="image/png">
 </head>
 <body class="lightmode">
-    <script type="module" src="./myscript.js" id="main-script"></script>
-    <script nomodule>
-        var fallbackScript = document.createElement('script');
-        fallbackScript.src = 'my_script.js';
-        document.body.appendChild(fallbackScript);
-    </script>
+    <!-- Modern browsers that support ES modules will use this script -->
+    <script type="module" src="./myscript.js"></script>
+    
+    <!-- Browsers without module support (like iOS 12) will use this script -->
+    <script nomodule src="./my_script.js"></script>
+    
+    <!-- Script to handle edge cases and ensure Firebase compatibility -->
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var mainScript = document.getElementById('main-script');
-            if (mainScript) {
-                mainScript.remove(); // Remove the main script
-                console.log('Main script removed');
+        // Feature detection for true ES module support
+        function supportsModules() {
+            try {
+                new Function('import("")');
+                return true;
+            } catch (err) {
+                return false;
             }
-
+        }
+        
+        // If browser claims to support modules but actually doesn't fully
+        // (some iOS versions have this issue), load the fallback script
+        if (document.querySelector('script[type="module"]') && !supportsModules()) {
+            console.log('Module syntax not fully supported, loading fallback script');
             var fallbackScript = document.createElement('script');
-            fallbackScript.src = 'my_script.js';
-            document.body.appendChild(fallbackScript); // Add the fallback script
-            console.log('Fallback script added');
-        });
+            fallbackScript.src = './my_script.js';
+            document.body.appendChild(fallbackScript);
+        }
     </script>
 </body>
 </html>
