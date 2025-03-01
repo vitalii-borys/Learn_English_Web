@@ -641,7 +641,7 @@ myEnterButton.addEventListener('click', () => {
             // Calculate the hint height and move the aspect container down
             setTimeout(() => {
                 const hintHeight = hint.offsetHeight;
-                document.getElementById('aspect-container').style.marginTop = (hintHeight + 10) + 'px';
+                document.getElementById('aspect-container').style.marginTop = (hintHeight - 20) + 'px';
             }, 0);
             let index = divManager.sortedENwords.indexOf(divManager.wordToGuess);
             console.log(index);
