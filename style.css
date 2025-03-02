@@ -85,14 +85,11 @@ div {
 #myInput {
     /* margin: 4px; */
     font-size: 2.7rem;
-    width: 1.75rem;
-    height: 2.5rem;
+    width: 0.8em;
+    height: 1.1em;
+    line-height: 1;
     text-align: center;
-    -webkit-appearance: none; /* Remove iOS default styling */
-    appearance: none;
-    box-sizing: border-box; /* Include padding in width calculation */
-    padding: 0; /* Remove default padding */
-    max-width: 1.75rem; /* Enforce maximum width */
+    box-sizing: border-box;
 }
 
 #back-to-sign-in {
