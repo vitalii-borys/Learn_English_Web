@@ -145,7 +145,6 @@ div {
 
 button {
     font-size: 1.5rem;
-    color: white;
 }
 
 #statusMessage {
@@ -173,10 +172,12 @@ span {
 }
 
 #backButton {
+    position: relative;
     top: 0.1rem;
     font-size: 1.5rem;
     border-radius: 7px;
     border: 1px solid green;
+    z-index: 11;
 }
 
 #enterButton {
@@ -279,6 +280,7 @@ span {
 
     button {
         background-color: transparent;
+        color: white;
     }
 }
 
@@ -293,5 +295,6 @@ span {
 
     button {
         background-color: transparent;
+        color: black;
     }
 }

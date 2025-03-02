@@ -645,6 +645,8 @@ infoButton.textContent = 'Про сайт';
 registrationForm.appendChild(infoButton);
 
 infoButton.addEventListener('click', () => {
+    hint.style.display = 'none';
+    consonantsVowelsDiv2.style.display = 'none';
     backButton.style.display = 'block';
     if (infoDiv.style.display === 'none') {
         infoDiv.style.display = 'block';
