@@ -88,8 +88,12 @@ div {
     width: 0.9em;
     height: 1em;
     text-align: center;
+    vertical-align: middle;
     box-sizing: border-box;
+    border: 1px solid black;
     border-radius: 7px;
+    line-height: 1.5em; /* Add this line to vertically center the text */
+    padding: 0; /* Add this line to remove any default padding */
 }
 
 #back-to-sign-in {
