@@ -172,6 +172,13 @@ span {
     animation: shake 0.5s;
 }
 
+#backButton {
+    top: 0.1rem;
+    font-size: 1.5rem;
+    border-radius: 7px;
+    border: 1px solid green;
+}
+
 #enterButton {
     position: absolute;
     font-size: 2rem;
@@ -198,6 +205,30 @@ span {
     border-radius: 8px;
     font-size: 1.1rem;
     border: 1px solid rgb(129, 129, 255);
+}
+
+.info-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid violet;
+}
+
+#registrationForm {
+    border: 1px solid green;
+}
+
+#infoDiv {
+    font-size: 1.1rem;
+    padding: 0.5rem;
+}
+
+#infobutton {
+    border-radius: 8px;
+    font-size: 1rem;
+    border: 1px solid black;
+    margin: 0.2rem;
 }
 
 #consonantVowelsHint2 {

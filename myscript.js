@@ -17,6 +17,9 @@ const firebaseConfig = {
   measurementId: "G-0R5Q4LWVHL"
 };
 
+let userIn = false;
+console.log(userIn + ' is userIn');
+
 const myApp = initializeApp(firebaseConfig);
 const auth = getAuth(myApp);
 
@@ -89,7 +92,7 @@ function createAuthButton(buttonTextContent, buttonClassName, buttonId) {
     signButton.textContent = buttonTextContent;
     signButton.className = buttonClassName;
     signButton.id = buttonId;
-    document.body.appendChild(signButton);
+    registrationForm.appendChild(signButton);
 }
 
 function createInput(inputType, inputPlaceholder, inputId) {
@@ -98,8 +101,14 @@ function createInput(inputType, inputPlaceholder, inputId) {
     input.placeholder = inputPlaceholder;
     input.id = inputId;
     input.style.display = 'block';
-    document.body.appendChild(input);
+    registrationForm.appendChild(input);
 }
+
+const registrationForm = document.createElement('div');
+registrationForm.id = 'registration-form';
+registrationForm.style.display = 'flex';
+registrationForm.style.flexDirection = 'column';
+document.body.appendChild(registrationForm);
 
 createInput('text', 'Ім\'я у грі', 'username');
 createInput('email', 'Електронна пошта', 'email');
@@ -149,7 +158,6 @@ if (mode === "verifyEmail" && oobCode) {
     document.getElementById('container').style.display = 'none';
     console.log("Not verify email page")
 }
-
 
 signInButton.addEventListener('click', async () => {
     console.log('Sign in button clicked');
@@ -203,18 +211,14 @@ createAccountButton.addEventListener('click', () => {
     createAccountButton.style.display = 'none';
 });
 
-// Assuming the necessary imports and initializations are already done
-
-// Create the "Try Without Registration" button
 const tryWithoutRegistrationButton = document.createElement('button');
 tryWithoutRegistrationButton.id = 'try-without-registration';
 tryWithoutRegistrationButton.textContent = 'Спробувати без реєстрації';
 tryWithoutRegistrationButton.style.fontSize = '1.1rem';
 tryWithoutRegistrationButton.style.display = 'block'; // Initially visible
 tryWithoutRegistrationButton.style.borderRadius = '4px'; // Initially visible
-document.body.appendChild(tryWithoutRegistrationButton);
+registrationForm.appendChild(tryWithoutRegistrationButton);
 
-// Add event listener for the button
 tryWithoutRegistrationButton.addEventListener('click', () => {
     const auth = getAuth();
     const email = 'photoshopprofy@gmail.com';
@@ -248,6 +252,12 @@ tryWithoutRegistrationButton.addEventListener('click', () => {
 
 onAuthStateChanged(auth, (user) => {
     if (user && user.emailVerified) {
+        userIn = true;
+        console.log(userIn + ' is userIn');
+        aspectDiv.appendChild(infoButton);
+        infoButton.style.position = 'absolute';
+        infoButton.style.bottom = '2.7rem';
+        infoButton.style.left = '0.05rem';
         tryWithoutRegistrationButton.style.display = 'none'; // Hide the button when signed in
         // Existing code for signed-in users...
         const firstSignIn = document.createElement('span');
@@ -306,6 +316,9 @@ onAuthStateChanged(auth, (user) => {
             statusMessage.style.opacity = '0';
         }, 2000);
     } else {
+        userIn = false;
+        console.log(userIn + ' is userIn');
+        registrationForm.appendChild(infoButton);
         tryWithoutRegistrationButton.style.display = 'block'; // Show the button when signed out
         // Existing code for signed-out users...
         console.log('User is signed out');
@@ -585,6 +598,10 @@ const leftDiv = document.createElement('div');
 const myInput = document.createElement('input');
 const rightDiv = document.createElement('div');
 const hintButton = document.createElement('button');
+
+const infoDiv = document.createElement('div');
+infoDiv.id = 'infoDiv';
+infoDiv.style.display = 'none';
 aspectDiv.id = 'aspect-container';
 userNameDisplay.id = 'usernameDisplay';
 aspectDiv.style.display = 'none';
@@ -610,6 +627,7 @@ toggleButton.innerHTML = 'Темна/Світла <br> тема';
 uaDiv.id = 'UAtext';
 uaDiv.textContent = 'Вітаю у грі. Натисніть "Enter" щоб почати.';
 document.body.appendChild(aspectDiv);
+document.body.appendChild(infoDiv);
 aspectDiv.appendChild(hintButton);
 aspectDiv.appendChild(uaDiv);
 aspectDiv.appendChild(myEnterButton);
@@ -620,6 +638,51 @@ aspectDiv.appendChild(toggleButton);
 connectedDiv.appendChild(leftDiv);
 connectedDiv.appendChild(myInput);
 connectedDiv.appendChild(rightDiv);
+
+const infoButton = document.createElement('button');
+infoButton.id = 'infobutton';
+infoButton.textContent = 'Про сайт';
+registrationForm.appendChild(infoButton);
+
+infoButton.addEventListener('click', () => {
+    backButton.style.display = 'block';
+    if (infoDiv.style.display === 'none') {
+        infoDiv.style.display = 'block';
+    }
+    if (aspectDiv.style.display === 'flex') {
+        aspectDiv.style.display = 'none';
+    }
+    if (registrationForm.style.display === 'flex') {
+        registrationForm.style.display = 'none';
+    }
+});
+
+infoDiv.innerHTML = `
+  <h2 style="font-size: 1rem; margin: 0.8rem 0 0.3rem 0;">Про автора</h2>
+  <p>Мене звати Борис Віталій. Кожне слово на цьому сайті — плід багаторічного вивчення англійської через перегляд фільмів та серіалів, адаптований для вашого використання. Цей сайт був створений з метою надати простий і легкий метод для щоденного вивчення англійської мови. Адже повторення це основа навчання.</p>
+  <h2 style="font-size: 1rem; margin: 0.8rem 0 0.3rem 0;">Контакти</h2>
+  <p>Email: <a href="mailto:[photoshopprofy@gmail.com]">[photoshopprofy@gmail.com]</a><br>
+  Телефон/Viber/Telegram: +380935946922<br>
+  Соц. мережі: <a href="https://www.linkedin.com/in/vitalii-borys-53309b4b/">LinkedIn</a>, <a href="https://www.facebook.com/photoshopprofy">Facebook</a>, <a href="https://www.instagram.com/vitaliy_borys/">Instagram</a></p>  
+  <p><strong>Мій проект фотогалереї</strong> - <a href="https://vitalii-borys.github.io/Gallery_HTML_CSS_JS/">Посилання</a><br>
+  <h2 style="font-size: 1rem; margin: 0.8rem 0 0.3rem 0;">Політика конфіденційності</h2>
+  <p>Ми поважаємо вашу приватність. Усі дані використовуються лише для збереження прогресу в грі. Всі паролі зберігаються відправляються в зашифрованому вигляді в сервіс Firebase. Адміністратор сайту не має доступу до паролів.</p>
+`;
+
+const backButton = document.createElement('button');
+backButton.id = 'backButton';
+backButton.textContent = 'Назад';
+backButton.style.display = 'block';
+infoDiv.prepend(backButton);
+
+backButton.addEventListener('click', () => {
+    infoDiv.style.display = 'none';
+    if (userIn) {
+        aspectDiv.style.display = 'flex';
+    } else {
+        registrationForm.style.display = 'flex';
+    }
+});
 
 function changeInputColor() {
     const char = divManager.charToGuess;
