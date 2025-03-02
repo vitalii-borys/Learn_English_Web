@@ -88,9 +88,11 @@ div {
     width: 1.75rem;
     height: 2.5rem;
     text-align: center;
-    -webkit-appearance: none; /* Disable default iOS styling */
-    appearance: none; /* Standard property for compatibility */
-    border-radius: 0; /* Disable rounded corners */
+    -webkit-appearance: none; /* Remove iOS default styling */
+    appearance: none;
+    box-sizing: border-box; /* Include padding in width calculation */
+    padding: 0; /* Remove default padding */
+    max-width: 1.75rem; /* Enforce maximum width */
 }
 
 #back-to-sign-in {
