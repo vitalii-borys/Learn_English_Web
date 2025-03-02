@@ -85,12 +85,11 @@ div {
 #myInput {
     /* margin: 4px; */
     font-size: 2.7rem;
-    width: 0.8em;
-    height: 1.1em;
-    line-height: 1;
+    width: 0.9em;
+    height: 1em;
     text-align: center;
-    vertical-align: middle;
     box-sizing: border-box;
+    border-radius: 7px;
 }
 
 #back-to-sign-in {
