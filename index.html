@@ -15,12 +15,30 @@
             document.body.appendChild(script);
         }
     
-        if (!('noModule' in HTMLScriptElement.prototype)) {
-            // Safari 12 bug detected - Load fallback script
+        // Safari 12 on iOS has a specific bug with ES modules and nomodule
+        var isSafari12 = /iPad|iPhone|iPod/.test(navigator.userAgent) && 
+                         !window.MSStream && 
+                         /Version\/12/.test(navigator.userAgent) && 
+                         /Safari/.test(navigator.userAgent);
+        
+        if (isSafari12 || !('noModule' in HTMLScriptElement.prototype)) {
+            // Either Safari 12 bug detected or modules not supported - Load fallback script
             loadScript("./my_script.js");
+        } else {
+            // For modern browsers that correctly support modules
+            var moduleScript = document.createElement("script");
+            moduleScript.type = "module";
+            moduleScript.src = "./myscript.js";
+            document.body.appendChild(moduleScript);
+            
+            // Add nomodule script for older browsers that correctly implement nomodule
+            var noModuleScript = document.createElement("script");
+            noModuleScript.noModule = true;
+            noModuleScript.src = "./my_script.js";
+            document.body.appendChild(noModuleScript);
         }
     </script>
-    <script type="module" src="./myscript.js"></script>
-    <script nomodule src="./my_script.js"></script>
+    <!-- <script type="module" src="./myscript.js"></script>
+    <script nomodule src="./my_script.js"></script> -->
 </body>
 </html>
