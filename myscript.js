@@ -256,8 +256,11 @@ onAuthStateChanged(auth, (user) => {
         console.log(userIn + ' is userIn');
         aspectDiv.appendChild(infoButton);
         infoButton.style.position = 'absolute';
-        infoButton.style.bottom = '2.7rem';
-        infoButton.style.left = '0.05rem';
+        infoButton.style.display = 'none';
+        infoButton.style.opacity = '0%';
+        infoButton.style.transition = 'opacity 0.5s, bottom 0.5s';
+        infoButton.style.bottom = '10%';
+        infoButton.style.left = '0%';
         tryWithoutRegistrationButton.style.display = 'none'; // Hide the button when signed in
         // Existing code for signed-in users...
         const firstSignIn = document.createElement('span');
@@ -269,7 +272,7 @@ onAuthStateChanged(auth, (user) => {
         console.log('User is signed in');
         pageStatus = 'signed in';
         statusMessage.textContent = 'User '  + user.email + ' is signed in.';
-        logOutButton.style.display = 'block';
+        logOutButton.style.display = 'none';
         const aspectContainer = document.getElementById('aspect-container');
         document.getElementById('email').style.display = 'none';
         document.getElementById('password').style.display = 'none';
@@ -351,6 +354,7 @@ function createTimeout(ms, methodName) {
 
 class DivManager {
     constructor(wordData) {
+        this.menuOpened = false;
         this.divID = 0;
         this.divs = [];
         this.ENwords = wordData.ENwords;
@@ -607,6 +611,7 @@ const aspectDiv = document.createElement('div');
 const userNameDisplay = document.createElement('div');
 const toggleButton = document.createElement('button');
 const myEnterButton = document.createElement('button');
+const menuButton = document.createElement('button');
 const removeLevelOne = document.createElement('button');
 const uaDiv = document.createElement('div');
 const connectedDiv = document.createElement('div');
@@ -614,10 +619,10 @@ const leftDiv = document.createElement('div');
 const myInput = document.createElement('input');
 const rightDiv = document.createElement('div');
 const hintButton = document.createElement('button');
-
 const infoDiv = document.createElement('div');
 infoDiv.id = 'infoDiv';
 infoDiv.style.display = 'none';
+menuButton.id = 'menuButton';
 aspectDiv.id = 'aspect-container';
 userNameDisplay.id = 'usernameDisplay';
 aspectDiv.style.display = 'none';
@@ -635,6 +640,7 @@ myInput.style.display = 'none';
 hintButton.style.display = 'none';
 myEnterButton.id = 'enterButton';
 myEnterButton.textContent = 'Enter'
+menuButton.innerHTML = 'Показати<br>меню';
 hintButton.textContent = 'Підказка';
 removeLevelOne.innerHTML = 'Скинути <br>  прогрес';
 removeLevelOne.id = 'removeLevelOne';
@@ -644,6 +650,7 @@ uaDiv.id = 'UAtext';
 uaDiv.textContent = 'Вітаю у грі. Натисніть "Enter" щоб почати.';
 document.body.appendChild(aspectDiv);
 document.body.appendChild(infoDiv);
+aspectDiv.appendChild(menuButton);
 aspectDiv.appendChild(hintButton);
 aspectDiv.appendChild(uaDiv);
 aspectDiv.appendChild(myEnterButton);
@@ -654,6 +661,44 @@ aspectDiv.appendChild(toggleButton);
 connectedDiv.appendChild(leftDiv);
 connectedDiv.appendChild(myInput);
 connectedDiv.appendChild(rightDiv);
+
+menuButton.addEventListener('click', () => {
+    if (divManager.menuOpened) {
+        menuButton.innerHTML = 'Показати<br>меню';
+        removeLevelOne.style.opacity = '0';
+        removeLevelOne.style.bottom = '10%';
+        toggleButton.style.opacity = '0';
+        toggleButton.style.bottom = '10%';
+        logOutButton.style.opacity = '0';
+        logOutButton.style.bottom = '10%';
+        infoButton.style.opacity = '0';
+        infoButton.style.bottom = '10%';
+        divManager.menuOpened = false;
+        setTimeout(() => {
+            removeLevelOne.style.display = 'none';
+            toggleButton.style.display = 'none';
+            logOutButton.style.display = 'none';
+            infoButton.style.display = 'none';
+        }, 520);
+    } else {
+        menuButton.innerHTML = 'Сховати<br>меню';
+        removeLevelOne.style.display = 'block';
+        toggleButton.style.display = 'block';
+        logOutButton.style.display = 'block';
+        infoButton.style.display = 'block';
+        setTimeout(() => {
+            removeLevelOne.style.opacity = '1';
+            removeLevelOne.style.bottom = '53%';
+            toggleButton.style.opacity = '1';
+            toggleButton.style.bottom = '40%';
+            logOutButton.style.opacity = '1';
+            logOutButton.style.bottom = '24%';
+            infoButton.style.opacity = '1';
+            infoButton.style.bottom = '31%';
+        }, 10);
+        divManager.menuOpened = true;
+    }
+});
 
 const infoButton = document.createElement('button');
 infoButton.id = 'infobutton';

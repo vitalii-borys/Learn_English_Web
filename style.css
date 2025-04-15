@@ -60,7 +60,7 @@ div {
 #usernameDisplay {
     font-size: 1.25rem;
     position: absolute;
-    bottom: 2.8rem;
+    bottom: 10%;
 }
 
 #username {
@@ -171,6 +171,16 @@ span {
     animation: shake 0.5s;
 }
 
+#menuButton {
+    position: absolute;
+    bottom: 10%;
+    left: 0%;
+    border-radius: 12px;
+    font-size: 1rem;
+    border: 2px solid green;
+    z-index: 11;
+}
+
 #backButton {
     position: relative;
     top: 0.1rem;
@@ -188,24 +198,6 @@ span {
     border: 2px solid green;
     right: 3%;
     bottom: 20%;
-}
-
-#toggleButton {
-    position: absolute;
-    bottom: 0.1rem;
-    left: 36%;
-    border-radius: 12px;
-    font-size: 1rem;
-    border: 1px solid orange;
-}
-
-#hintButton {
-    position: absolute;
-    bottom: 2.8rem;
-    right: 0.1rem;
-    border-radius: 8px;
-    font-size: 1.1rem;
-    border: 1px solid rgb(129, 129, 255);
 }
 
 .info-container {
@@ -241,24 +233,48 @@ span {
     bottom: 5.75rem;
 }
 
+#hintButton {
+    position: absolute;
+    bottom: 2.8rem;
+    right: 0.1rem;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    border: 1px solid rgb(129, 129, 255);
+}
+
+#toggleButton {
+    display: none;
+    position: absolute;
+    bottom: 10%;
+    left: 0%;
+    border-radius: 12px;
+    font-size: 1rem;
+    border: 1px solid black;
+    transition: opacity 0.5s, bottom 0.5s cubic-bezier(0,.82,.43,.92);
+}
+
 #removeLevelOne {
+    display: none;
     position: absolute;
     left: 0.1rem;
-    bottom: 0.1rem;
+    bottom: 10%;
     border-radius: 10px;
     border: none;
     font-size: 1rem;
-    border: 1px solid red;
+    border: 1px solid black;
+    transition: opacity 0.5s, bottom 0.5s;
 }
 
 #log-out {
+    display: none;
     position: absolute;
-    right: 20px;
-    bottom: 10px;
+    left: 0%;
+    bottom: 10%;
     border-radius: 12px;
     border: none;
-    font-size: 1.15rem;
-    border: 1px solid red;
+    font-size: 1rem;
+    border: 1px solid black;
+    transition: opacity 0.5s, bottom 0.5s;
 }
 
 #connectedText {
