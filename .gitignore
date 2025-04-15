@@ -6,3 +6,9 @@ node_modules/
 
 # Optional: Package lock
 package-lock.json
+
+indexTest.html
+myScriptTest.js
+word-frequency-sorter.html
+wordDataSimple.js
+wordDataSimple_test.js

@@ -378,7 +378,7 @@ class DivManager {
         console.log(this.sortedUAwords);
     }
     
-    shuffleArray(arrayOfWords) {
+/*     shuffleArray(arrayOfWords) {
         const { ENwords, UAwords } = arrayOfWords;
         const filteredIndices = ENwords
             .map((word, index) => (this.ENwordsLevelOne.includes(word) ? null : index))
@@ -394,7 +394,23 @@ class DivManager {
             ENwords: filteredENwords,
             UAwords: filteredUAwords,
         };
+    } */
+
+    shuffleArray(arrayOfWords) {
+        const { ENwords, UAwords } = arrayOfWords;
+        const filteredIndices = ENwords
+            .map((word, index) => (this.ENwordsLevelOne.includes(word) ? null : index))
+            .filter(index => index !== null);
+        
+        const filteredENwords = filteredIndices.map(index => ENwords[index]);
+        const filteredUAwords = filteredIndices.map(index => UAwords[index].replace('\t', ' | '));
+        
+        return {
+            ENwords: filteredENwords,
+            UAwords: filteredUAwords,
+        };
     }
+        
 
 async loadWordLists() {
     try {
@@ -706,7 +722,12 @@ hintButton.addEventListener('click', () => {
   consonantsVowelsDiv2.style.display = 'block';
 });
 
-removeLevelOne.addEventListener('click', () => {removeAllWordsLevelOne();})
+/* removeLevelOne.addEventListener('click', () => {removeAllWordsLevelOne();}) */
+removeLevelOne.addEventListener('click', async () => {
+    await removeAllWordsLevelOne();
+    window.location.reload();
+});
+
 toggleButton.addEventListener('click', () => {lightDarkMode();});
 
 function getWordWindow(words, index) {

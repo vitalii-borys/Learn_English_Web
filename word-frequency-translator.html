@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Word Frequency Sorter with Translations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .upload-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .file-input {
+            border: 1px solid #ccc;
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #results {
+            margin-top: 20px;
+        }
+        .result-container {
+            margin-top: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .download-btn {
+            margin-top: 15px;
+            margin-right: 10px;
+            background-color: #008CBA;
+        }
+        .download-btn:hover {
+            background-color: #007399;
+        }
+        .absent-word {
+            color: #999;
+        }
+        .info {
+            background-color: #e7f3fe;
+            border-left: 6px solid #2196F3;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        .download-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .code-preview {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            white-space: pre-wrap;
+        }
+        .tab-buttons {
+            display: flex;
+            margin-top: 20px;
+        }
+        .tab-button {
+            padding: 10px 15px;
+            border: none;
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+        .tab-button.active {
+            background-color: #ccc;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Word Frequency Sorter with Translations</h1>
+    
+    <div class="info">
+        <p>Upload three files:</p>
+        <ol>
+            <li>English words list</li>
+            <li>Ukrainian translations list</li>
+            <li>English word frequency list</li>
+        </ol>
+        <p>The app will generate two files:</p>
+        <ol>
+            <li>A sorted list of English words with their frequencies</li>
+            <li>A JavaScript file with both English words and Ukrainian translations in the sorted order</li>
+        </ol>
+    </div>
+    
+    <div class="upload-container">
+        <div class="file-input">
+            <label for="english-file">Upload English Words File:</label>
+            <input type="file" id="english-file" accept=".txt">
+            <p>Example format:<br>essentials<br>fiend<br>fix up<br>flatter</p>
+        </div>
+        
+        <div class="file-input">
+            <label for="ukrainian-file">Upload Ukrainian Translations File:</label>
+            <input type="file" id="ukrainian-file" accept=".txt">
+            <p>Example format:<br>предмети першої необхідності	необхідне<br>демон	біс<br>врегулювати	полагодити<br>лестити</p>
+        </div>
+        
+        <div class="file-input">
+            <label for="frequency-file">Upload Frequency File:</label>
+            <input type="file" id="frequency-file" accept=".txt">
+            <p>Example format:<br>the 23135851162<br>of 13151942776<br>and 12997637966</p>
+        </div>
+        
+        <button id="process-btn">Process Files</button>
+    </div>
+    
+    <div class="result-container" id="result-container" style="display: none;">
+        <h2>Results</h2>
+        <div id="summary"></div>
+        
+        <div class="tab-buttons">
+            <button class="tab-button active" data-tab="frequency-tab">Frequency List</button>
+            <button class="tab-button" data-tab="js-tab">JavaScript File</button>
+        </div>
+        
+        <div class="tab-content active" id="frequency-tab">
+            <table id="results-table">
+                <thead>
+                    <tr>
+                        <th>English Word</th>
+                        <th>Ukrainian Translation</th>
+                        <th>Frequency</th>
+                    </tr>
+                </thead>
+                <tbody id="results-body"></tbody>
+            </table>
+        </div>
+        
+        <div class="tab-content" id="js-tab">
+            <h3>JavaScript File Preview:</h3>
+            <div class="code-preview" id="js-preview"></div>
+        </div>
+        
+        <div class="download-container">
+            <button id="download-freq-btn" class="download-btn">Download Frequency List</button>
+            <button id="download-js-btn" class="download-btn">Download JavaScript File</button>
+        </div>
+    </div>
+    
+    <script>
+        // Add event listeners
+        document.getElementById('process-btn').addEventListener('click', processFiles);
+        document.getElementById('download-freq-btn').addEventListener('click', downloadFrequencyList);
+        document.getElementById('download-js-btn').addEventListener('click', downloadJSFile);
+        
+        // Setup tab functionality
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all tabs and content
+                document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                // Add active class to clicked tab and corresponding content
+                button.classList.add('active');
+                document.getElementById(button.getAttribute('data-tab')).classList.add('active');
+            });
+        });
+        
+        let processedData = [];
+        
+        function processFiles() {
+            const englishFile = document.getElementById('english-file').files[0];
+            const ukrainianFile = document.getElementById('ukrainian-file').files[0];
+            const frequencyFile = document.getElementById('frequency-file').files[0];
+            
+            if (!englishFile || !ukrainianFile || !frequencyFile) {
+                alert('Please upload all three files');
+                return;
+            }
+            
+            // Read all files
+            Promise.all([
+                readFileContent(englishFile),
+                readFileContent(ukrainianFile),
+                readFileContent(frequencyFile)
+            ]).then(([englishContent, ukrainianContent, frequencyContent]) => {
+                // Process the content
+                const englishWords = parseWordsList(englishContent);
+                const ukrainianTranslations = parseTranslationsList(ukrainianContent);
+                const frequencies = parseFrequencyList(frequencyContent);
+                
+                if (englishWords.length !== ukrainianTranslations.length) {
+                    alert(`Warning: The number of English words (${englishWords.length}) does not match the number of Ukrainian translations (${ukrainianTranslations.length})`);
+                }
+                
+                // Match words with frequencies and sort
+                processedData = matchAndSort(englishWords, ukrainianTranslations, frequencies);
+                
+                // Display results
+                displayResults(processedData);
+                generateJSPreview(processedData);
+                
+                // Show results container
+                document.getElementById('result-container').style.display = 'block';
+            }).catch(error => {
+                alert('Error processing files: ' + error.message);
+            });
+        }
+        
+        function readFileContent(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = event => resolve(event.target.result);
+                reader.onerror = error => reject(error);
+                reader.readAsText(file);
+            });
+        }
+        
+        function parseWordsList(content) {
+            // Split by new line and filter out empty lines
+            return content
+                .split(/\r?\n/)
+                .map(word => word.trim())
+                .filter(word => word.length > 0);
+        }
+        
+        function parseTranslationsList(content) {
+            // Split by new line and filter out empty lines
+            return content
+                .split(/\r?\n/)
+                .map(translation => translation.trim())
+                .filter(translation => translation.length > 0);
+        }
+        
+        function parseFrequencyList(content) {
+            const frequencyMap = {};
+            
+            // Split by new line
+            const lines = content.split(/\r?\n/).filter(line => line.trim().length > 0);
+            
+            lines.forEach(line => {
+                // Split each line by tab or multiple spaces
+                const parts = line.trim().split(/\s+/);
+                
+                if (parts.length >= 2) {
+                    const word = parts[0].trim();
+                    // Parse the frequency as a number (could be a large number)
+                    const frequency = parseInt(parts[1].replace(/,/g, ''), 10);
+                    
+                    if (!isNaN(frequency)) {
+                        frequencyMap[word] = frequency;
+                    }
+                }
+            });
+            
+            return frequencyMap;
+        }
+        
+        function matchAndSort(englishWords, ukrainianTranslations, frequencies) {
+            const result = [];
+            
+            // Create data structure with all information
+            for (let i = 0; i < englishWords.length; i++) {
+                const englishWord = englishWords[i];
+                const ukrainianTranslation = i < ukrainianTranslations.length ? ukrainianTranslations[i] : '';
+                const frequency = frequencies[englishWord] || 0;
+                
+                result.push({
+                    englishWord,
+                    ukrainianTranslation,
+                    frequency,
+                    found: frequency > 0
+                });
+            }
+            
+            // Sort by frequency (highest first), then by words with no frequency at the end
+            result.sort((a, b) => {
+                if (a.found !== b.found) {
+                    return a.found ? -1 : 1; // Found words before absent words
+                }
+                return b.frequency - a.frequency; // Sort by frequency (descending)
+            });
+            
+            return result;
+        }
+        
+        function displayResults(data) {
+            const tableBody = document.getElementById('results-body');
+            tableBody.innerHTML = '';
+            
+            const summary = document.getElementById('summary');
+            const foundWords = data.filter(item => item.found).length;
+            const missingWords = data.length - foundWords;
+            
+            summary.innerHTML = `
+                <p>Total words: ${data.length}</p>
+                <p>Words found in frequency list: ${foundWords}</p>
+                <p>Words not found in frequency list: ${missingWords}</p>
+            `;
+            
+            data.forEach(item => {
+                const row = document.createElement('tr');
+                
+                if (!item.found) {
+                    row.classList.add('absent-word');
+                }
+                
+                row.innerHTML = `
+                    <td>${item.englishWord}</td>
+                    <td>${item.ukrainianTranslation}</td>
+                    <td>${item.found ? item.frequency.toLocaleString() : 'Not found'}</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+        
+        function generateJSPreview(data) {
+            const jsPreview = document.getElementById('js-preview');
+            
+            // Extract English words and Ukrainian translations in the sorted order
+            const englishWords = data.map(item => `    "${escapeJSString(item.englishWord)}"`);
+            
+            // For Ukrainian translations, we need to keep actual tabs as \t in the string
+            const ukrainianWords = data.map(item => {
+                // Replace actual tabs with the literal string \t for display in JS
+                const formattedTranslation = item.ukrainianTranslation.replace(/\t/g, '\\t');
+                return `    "${escapeJSString(formattedTranslation, true)}"`;
+            });
+            
+            const jsContent = `// wordData.js
+export const wordData = {
+    ENwords: [
+${englishWords.join(',\n')}
+],
+    UAwords: [
+${ukrainianWords.join(',\n')}
+]
+};`;
+            
+            jsPreview.textContent = jsContent;
+        }
+        
+        function escapeJSString(str, preserveTabEscapes = false) {
+            let result = str
+                .replace(/\\/g, '\\\\')
+                .replace(/"/g, '\\"')
+                .replace(/\n/g, '\\n')
+                .replace(/\r/g, '\\r');
+                
+            // If we want to preserve already escaped tabs (i.e., not double-escape them)
+            if (preserveTabEscapes) {
+                // First temporarily replace any already escaped tabs
+                result = result.replace(/\\\\t/g, '{{ESCAPED_TAB}}');
+                // Then fix any double-escaped backslashes
+                result = result.replace(/\\\\\\\\/g, '\\\\');
+                // Finally restore the temporarily replaced escaped tabs
+                result = result.replace(/{{ESCAPED_TAB}}/g, '\\t');
+            }
+            
+            return result;
+        }
+        
+        function downloadFrequencyList() {
+            if (processedData.length === 0) {
+                alert('No data to download');
+                return;
+            }
+            
+            // Create content for the file
+            const content = processedData
+                .map(item => `${item.englishWord}\t${item.found ? item.frequency : 0}`)
+                .join('\n');
+            
+            // Create blob and download link
+            downloadFile(content, 'sorted_words_with_frequencies.txt', 'text/plain');
+        }
+        
+        function downloadJSFile() {
+            if (processedData.length === 0) {
+                alert('No data to download');
+                return;
+            }
+            
+            // Extract English words and Ukrainian translations in the sorted order
+            const englishWords = processedData.map(item => `    "${escapeJSString(item.englishWord)}"`);
+            
+            // For Ukrainian translations, handle tabs correctly
+            const ukrainianWords = processedData.map(item => {
+                // Replace actual tabs with the literal string \t for JS
+                const formattedTranslation = item.ukrainianTranslation.replace(/\t/g, '\\t');
+                return `    "${escapeJSString(formattedTranslation, true)}"`;
+            });
+            
+            const jsContent = `// wordData.js
+export const wordData = {
+    ENwords: [
+${englishWords.join(',\n')}
+],
+    UAwords: [
+${ukrainianWords.join(',\n')}
+]
+};`;
+            
+            // Create blob and download link
+            downloadFile(jsContent, 'wordData.js', 'text/javascript');
+        }
+        
+        function downloadFile(content, filename, type) {
+            const blob = new Blob([content], { type: type });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            
+            // Clean up
+            setTimeout(() => {
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 0);
+        }
+    </script>
+</body>
+</html>
