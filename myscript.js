@@ -612,6 +612,7 @@ const userNameDisplay = document.createElement('div');
 const toggleButton = document.createElement('button');
 const myEnterButton = document.createElement('button');
 const menuButton = document.createElement('button');
+const scrollFiftyButton = document.createElement('button');
 const removeLevelOne = document.createElement('button');
 const uaDiv = document.createElement('div');
 const connectedDiv = document.createElement('div');
@@ -623,6 +624,7 @@ const infoDiv = document.createElement('div');
 infoDiv.id = 'infoDiv';
 infoDiv.style.display = 'none';
 menuButton.id = 'menuButton';
+scrollFiftyButton.id = 'scrollFiftyButton';
 aspectDiv.id = 'aspect-container';
 userNameDisplay.id = 'usernameDisplay';
 aspectDiv.style.display = 'none';
@@ -641,6 +643,7 @@ hintButton.style.display = 'none';
 myEnterButton.id = 'enterButton';
 myEnterButton.textContent = 'Enter'
 menuButton.innerHTML = 'Показати<br>меню';
+scrollFiftyButton.innerHTML = 'Прокрутити<br>50 слів';
 hintButton.textContent = 'Підказка';
 removeLevelOne.innerHTML = 'Скинути <br>  прогрес';
 removeLevelOne.id = 'removeLevelOne';
@@ -651,6 +654,7 @@ uaDiv.textContent = 'Вітаю у грі. Натисніть "Enter" щоб п�
 document.body.appendChild(aspectDiv);
 document.body.appendChild(infoDiv);
 aspectDiv.appendChild(menuButton);
+aspectDiv.appendChild(scrollFiftyButton);
 aspectDiv.appendChild(hintButton);
 aspectDiv.appendChild(uaDiv);
 aspectDiv.appendChild(myEnterButton);
@@ -662,9 +666,20 @@ connectedDiv.appendChild(leftDiv);
 connectedDiv.appendChild(myInput);
 connectedDiv.appendChild(rightDiv);
 
+scrollFiftyButton.addEventListener('click', () => {
+    try {
+        scrollFifty();
+    } catch (error) {
+        console.log(error);
+    }
+    divManager.loadAndDisplayUserInfo();
+});
+
 menuButton.addEventListener('click', () => {
     if (divManager.menuOpened) {
         menuButton.innerHTML = 'Показати<br>меню';
+        scrollFiftyButton.style.opacity = '0';
+        scrollFiftyButton.style.bottom = '10%';
         removeLevelOne.style.opacity = '0';
         removeLevelOne.style.bottom = '10%';
         toggleButton.style.opacity = '0';
@@ -675,6 +690,7 @@ menuButton.addEventListener('click', () => {
         infoButton.style.bottom = '10%';
         divManager.menuOpened = false;
         setTimeout(() => {
+            scrollFiftyButton.style.display = 'none';
             removeLevelOne.style.display = 'none';
             toggleButton.style.display = 'none';
             logOutButton.style.display = 'none';
@@ -682,11 +698,14 @@ menuButton.addEventListener('click', () => {
         }, 520);
     } else {
         menuButton.innerHTML = 'Сховати<br>меню';
+        scrollFiftyButton.style.display = 'block';
         removeLevelOne.style.display = 'block';
         toggleButton.style.display = 'block';
         logOutButton.style.display = 'block';
         infoButton.style.display = 'block';
         setTimeout(() => {
+            scrollFiftyButton.style.opacity = '1';
+            scrollFiftyButton.style.bottom = '66%';
             removeLevelOne.style.opacity = '1';
             removeLevelOne.style.bottom = '53%';
             toggleButton.style.opacity = '1';
@@ -878,6 +897,48 @@ myEnterButton.addEventListener('click', () => {
     myInput.style.display = 'flex';
     myInput.focus();
 });
+
+async function scrollFifty() {
+    scrollFiftyButton.style.display = 'none';
+    myInput.style.backgroundColor = 'white';
+    hintButton.style.display = 'block';
+    hint.style.display = 'none';
+    document.getElementById('aspect-container').style.marginTop = '0'; // Reset container position
+    consonantsVowelsDiv2.style.display = 'none';
+    divManager.wrongInputCount = 0;
+    for (let i = 0; i < 50; i++) {
+        if (divManager.shuffledData.ENwords.length === 0) {
+            uaDiv.textContent = "Вітаю з перемогою!";
+            myInput.value = '';
+            document.getElementById('leftText').textContent = '';
+            document.getElementById('rightText').textContent = '';
+            return;
+            } else {
+            divManager.ENwordsLevelOne.push(divManager.wordtoguess);
+            divManager.UAwordsLevelOne.push(divManager.wordtoguessTranslation);            
+            divManager.splitWordDiv();
+            divManager.createDiv();
+        }
+        divManager.moveAllDivsDown();
+        await new Promise(resolve => setTimeout(resolve, 50));
+    }
+    divManager.showConstructor('After scrollFifty clicked');
+    myInput.value = '';
+    myInput.style.display = 'flex';
+    myInput.focus();
+    try {
+        divManager.userId = getAuth().currentUser.uid;
+        console.log("User UID:", divManager.userId);
+        await setDoc(doc(db, "wordLists", divManager.userId), {
+            EN1: divManager.ENwordsLevelOne,
+            UA1: divManager.UAwordsLevelOne
+    });
+    console.log("Words stored successfully!");
+    } catch (error) {
+        console.error("Error writing document: ", error);
+    }
+    scrollFiftyButton.style.display = 'block';
+}
 
 async function storeWordsLevelOne() {
     try {

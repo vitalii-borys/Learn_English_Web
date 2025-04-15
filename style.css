@@ -242,6 +242,17 @@ span {
     border: 1px solid rgb(129, 129, 255);
 }
 
+#scrollFiftyButton {
+    display: none;
+    position: absolute;
+    bottom: 10%;
+    left: 0%;
+    border-radius: 12px;
+    font-size: 1rem;
+    border: 1px solid black;
+    transition: opacity 0.5s, bottom 0.5s cubic-bezier(0,.82,.43,.92);
+}
+
 #toggleButton {
     display: none;
     position: absolute;
